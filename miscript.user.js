@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name prueba
+// @name miscript
 // @namespace amc252
 // @version 0.1
 // @author Alejandro Martinez
-// @description Prueba básica, muestra una alerta con un mensaje
+// @description Web aumentada de planificación de viajes
 // @match https://www.alicanteturismo.com/*
 // @grant none
 // @require http://code.jquery.com/jquery-3.5.1.min.js
