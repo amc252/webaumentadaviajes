@@ -24,14 +24,14 @@ var tipo_punto = {
     centros_deportivos: 'volleyball', // este no funca
     hoteles: 'lodging',
     centros_educativos: 'school',
-    estaciones_alcoi: 'rail-light', // nombre undefined
+    estaciones_alcoi: 'rail-light',
     gasolineras: 'fuel',
     farmacias: 'pharmacy',
     autobuses: 'bus',
     policia: 'police',
-    ruta_ovidi: 'marker', // nombre undefined
-    ruta_camilo_sesto: 'marker', // nombre undefined
-    ruta_industrial: 'marker', // nombre undefined
+    ruta_ovidi: 'marker',
+    ruta_camilo_sesto: 'marker',
+    ruta_industrial: 'marker',
     puntos_wifi: 'viewpoint', // este no funca
     piscinas_publicas: 'swimming',
 };
@@ -666,6 +666,7 @@ function cargarOpenDataAlcoi(url_open_data_alcoi, id_conjunto_datos, icono_conju
         dataType: "xml",
         success: function (data) {
 
+            console.log(data);
             var alcoi_data = {};
             alcoi_data['categoria'] = id_conjunto_datos;
             alcoi_data['type'] = 'FeatureCollection';
@@ -677,7 +678,12 @@ function cargarOpenDataAlcoi(url_open_data_alcoi, id_conjunto_datos, icono_conju
                     item_data_properties['icon'] = icono_conjunto;
                     item_data_properties['info_adicional'] = "";
                     $(this).find('SimpleData').each(function () {
-                        if (($(this).attr('name').toLowerCase() === 'nombre') || ($(this).attr('name').toLowerCase() === 'unidad')) {
+                        if (
+                            ($(this).attr('name').toLowerCase() === 'nombre') ||
+                            ($(this).attr('name').toLowerCase() === 'unidad') ||
+                            ($(this).attr('name').toLowerCase() === 'descripcio') ||
+                            ($(this).attr('name').toLowerCase() === 'tipo')
+                        ) {
                             item_data_properties['nombre'] = $(this).text();
                         }
                         else if (($(this).attr('name').toLowerCase() === 'direccion') || ($(this).attr('name').toLowerCase() === 'dirección')) {
