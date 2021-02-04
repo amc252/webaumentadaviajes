@@ -189,7 +189,7 @@ function crearCheckBoxMapa() {
     $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_museos').attr('type', 'checkbox')).append('Museos');
     $('#cb_museos').change(function () {
         if (this.checked) {
-            // cargarOpenDataAlcoiMuseos(); //cagar museos en el mapa
+            //cagar museos en el mapa
             cargarOpenDataAlcoi("https://opendata.alcoi.org/data/dataset/886eddf5-dd23-4d71-a498-b3ec2ed8cdab/resource/9baf3624-2862-4eaa-919c-630099e4663b/download/museus.kml", "museos", tipo_punto.museo);
         }
         else {
@@ -199,7 +199,7 @@ function crearCheckBoxMapa() {
     $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_parques').attr('type', 'checkbox')).append('Parques');
     $('#cb_parques').change(function () {
         if (this.checked) {
-            // cargarOpenDataAlcoiParques(); //cagar parques en el mapa
+            //cagar parques en el mapa
             cargarOpenDataAlcoi("https://opendata.alcoi.org/data/dataset/7386134f-5065-4470-8323-45fd076d7619/resource/387fdca3-a8a8-4dc0-91f8-2eb80c3e8933/download/parques.kml", "parques", tipo_punto.parque);
         }
         else {
@@ -543,120 +543,6 @@ function pintarPuntosMapa(conjunto_puntos, id_conjunto_puntos) {
 function borrarPuntosMapa(id_conjunto_puntos) {
     map.removeLayer(id_conjunto_puntos);
     map.removeSource(id_conjunto_puntos);
-}
-
-function cargarOpenDataAlcoiMuseos() {
-
-    $.ajax({
-        // el trozo de url del principio es por este post
-        // https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe/43881141#43881141
-        url: proxy_cors + "https://opendata.alcoi.org/data/dataset/886eddf5-dd23-4d71-a498-b3ec2ed8cdab/resource/9baf3624-2862-4eaa-919c-630099e4663b/download/museus.kml",
-        type: "get",
-        dataType: "xml",
-        success: function (data) {
-            // console.log("princiupio data");
-            // console.log(data);
-            // console.log("fin data");
-
-            var alcoi_data = {};
-            alcoi_data['categoria'] = 'museos';
-            alcoi_data['type'] = 'FeatureCollection';
-            alcoi_data['features'] = [];
-            $(data).find('Folder').each(function () {
-                // var name = $(this).attr('name');
-                // console.log(this.tagName);
-                // console.log($(this).text());
-
-                $(this).find('Placemark').each(function () {
-                    // console.log(this.tagName);
-                    // console.log($(this).text());
-                    var item_data = {}
-                    var item_data_properties = {}
-                    item_data_properties['icon'] = tipo_punto.museo;
-                    // item_data['properties'] = 'Feature'
-                    $(this).find('SimpleData').each(function () {
-                        // console.log(this.tagName);
-                        // console.log($(this).attr('name'));
-                        // console.log($(this).text());
-                        if ($(this).attr('name') === 'telefono') {
-                            item_data_properties['info_adicional'] = $(this).text();
-                        } else {
-                            item_data_properties[$(this).attr('name')] = $(this).text();
-                        }
-                    });
-                    item_data['properties'] = item_data_properties;
-
-                    $(this).find('coordinates').each(function () {
-                        // console.log(this.tagName);
-                        // console.log($(this).text());
-                        item_data['geometry'] = {
-                            'type': 'Point',
-                            // 'coordinates': $(this).text()
-                            'coordinates': []
-                        };
-                        item_data['geometry']['coordinates'][0] = parseFloat($(this).text().split(',')[0]);
-                        item_data['geometry']['coordinates'][1] = parseFloat($(this).text().split(',')[1]);
-                    });
-                    alcoi_data['features'].push(item_data);
-
-                });
-            });
-            console.log("museos");
-            console.log(alcoi_data);
-            pintarPuntosMapa(alcoi_data, 'museos'); //pintamos los museos en el mapa
-        },
-        error: function (errorMessage) {
-            console.log("error open data alcoi museos");
-            console.log(errorMessage);
-        }
-    });
-
-}
-
-function cargarOpenDataAlcoiParques() {
-
-    $.ajax({
-        url: proxy_cors + "https://opendata.alcoi.org/data/dataset/7386134f-5065-4470-8323-45fd076d7619/resource/387fdca3-a8a8-4dc0-91f8-2eb80c3e8933/download/parques.kml",
-        type: "get",
-        dataType: "xml",
-        success: function (data) {
-
-            var alcoi_data_parques = {};
-            alcoi_data_parques['categoria'] = 'parques';
-            alcoi_data_parques['type'] = 'FeatureCollection';
-            alcoi_data_parques['features'] = [];
-            $(data).find('Folder').each(function () {
-                $(this).find('Placemark').each(function () {
-                    var item_data = {}
-                    var item_data_properties = {}
-                    item_data_properties['icon'] = tipo_punto.parque;
-                    $(this).find('SimpleData').each(function () {
-                        item_data_properties[$(this).attr('name')] = $(this).text();
-                    });
-                    item_data['properties'] = item_data_properties;
-
-                    $(this).find('coordinates').each(function () {
-                        item_data['geometry'] = {
-                            'type': 'Point',
-                            'coordinates': []
-                        };
-                        item_data['geometry']['coordinates'][0] = parseFloat($(this).text().split(',')[0]);
-                        item_data['geometry']['coordinates'][1] = parseFloat($(this).text().split(',')[1]);
-                    });
-                    alcoi_data_parques['features'].push(item_data);
-
-                });
-            });
-            console.log("parques");
-            console.log(alcoi_data_parques);
-            pintarPuntosMapa(alcoi_data_parques, 'parques'); //pintamos los parques en el mapa
-        },
-        error: function (errorMessage) {
-            console.log("error open data alcoi parques");
-            console.log(errorMessage);
-        }
-    });
-
 }
 
 function cargarOpenDataAlcoi(url_open_data_alcoi, id_conjunto_datos, icono_conjunto) {
