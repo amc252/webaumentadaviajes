@@ -67,7 +67,7 @@ $(function () {
                 // });
             }));
 
-    console.log("cargó todo");
+    // console.log("cargó todo");
 });
 
 $(document).ready(function () {
@@ -86,7 +86,6 @@ $(document).ready(function () {
     else {
         // alert("si existe la pagina");
         if (pathname == "/contacto/") {
-            console.log("-----------inicio------------")
             cargaContacto();
         }
     }
@@ -176,6 +175,7 @@ function cargaContacto() {
             $(".et_pb_row_1").append($('<div>').attr("id", "datos_renfe_estaciones"));
 
             $(".et_pb_row_1").append('<hr>');
+            cargarFourSquare();
         },
         error: function (errorMessage) {
             console.log("error_wikipedia");
@@ -414,7 +414,7 @@ function cargarMapa(id_div_mapa) {
     // console.log($("head")[0]);
 
     $.getScript('https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js', function () {
-        console.log("cargo el mapa")
+        // console.log("cargo el mapa")
         mapboxgl.accessToken = 'pk.eyJ1IjoiYW1jMjUyIiwiYSI6ImNramJuaXZ1dDA5emkyc3Aybzdna2wxZXUifQ.kbehf-GRfLRd1vt5UaRVQg';
 
         map = new mapboxgl.Map({
@@ -552,7 +552,7 @@ function cargarOpenDataAlcoi(url_open_data_alcoi, id_conjunto_datos, icono_conju
         dataType: "xml",
         success: function (data) {
 
-            console.log(data);
+            // console.log(data);
             var alcoi_data = {};
             alcoi_data['categoria'] = id_conjunto_datos;
             alcoi_data['type'] = 'FeatureCollection';
@@ -593,9 +593,9 @@ function cargarOpenDataAlcoi(url_open_data_alcoi, id_conjunto_datos, icono_conju
 
                 });
             });
-            console.log("generico");
-            console.log(id_conjunto_datos);
-            console.log(alcoi_data);
+            // console.log("generico");
+            // console.log(id_conjunto_datos);
+            // console.log(alcoi_data);
             pintarPuntosMapa(alcoi_data, id_conjunto_datos); //pintamos los parques en el mapa
         },
         error: function (errorMessage) {
@@ -658,4 +658,56 @@ function cargarDataRenfeEstaciones() {
 
 
     $('#datos_renfe_estaciones').append($('<p>').text("adios"));
+}
+
+function cargarFourSquare() {
+
+    // coordenadas Alcoi
+    var latitud = 38.7054500;
+    var longitud = -0.4743200;
+    var cliente_id = "OKZY1EOEOIBMIUKLFMRDYXP3WW4KX1WNJXVSUI30WNQQ352E";
+    var cliente_secret = "IWDPT4VMHVLIMHHVQJHVWETBUDCSJIVH154OT2512LK3UQPX";
+    $.ajax({
+        url: 'https://api.foursquare.com/v2/venues/explore?' +
+            'll=' + latitud + ',' + longitud +
+            '&limit=30&client_id=' + cliente_id +
+            '&client_secret=' + cliente_secret +
+            '&v=20210204',
+        type: "get",
+        cache: false,
+        dataType: 'jsonp',
+        success: function (data) {
+            // console.log("ini data foursquere");
+            // console.log(data);
+            // console.log(data.response.groups[0].items);
+            // console.log("fin data foursquere");
+            var foursquare_data = {};
+            foursquare_data['categoria'] = "foursquare_data";
+            foursquare_data['type'] = 'FeatureCollection';
+            foursquare_data['features'] = [];
+            for (i = 0; i < data.response.groups[0].items.length; i++) {
+                var item_data_foursquare = {};
+                var item_data_foursquare_properties = {};
+                item_data_foursquare_properties['icon'] = tipo_punto.triangulo;
+                var item_data_foursquare_geometry = {};
+                item_data_foursquare_properties['direccion'] = data.response.groups[0].items[i].venue.location.address;
+                item_data_foursquare_properties['nombre'] = data.response.groups[0].items[i].venue.name;
+                item_data_foursquare_properties['info_adicional'] = data.response.groups[0].items[i].venue.categories[0].name;
+
+                item_data_foursquare_geometry['type'] = 'Point';
+                item_data_foursquare_geometry['coordinates'] = [data.response.groups[0].items[i].venue.location.lng, data.response.groups[0].items[i].venue.location.lat];
+
+                item_data_foursquare['properties'] = item_data_foursquare_properties;
+                item_data_foursquare['geometry'] = item_data_foursquare_geometry;
+                foursquare_data['features'].push(item_data_foursquare);
+            }
+
+            // console.log(foursquare_data);
+            pintarPuntosMapa(foursquare_data, 'foursquare_data');
+        },
+        error: function (errorMessage) {
+            console.log("error_data_foursquare");
+            console.log(errorMessage);
+        }
+    });
 }
