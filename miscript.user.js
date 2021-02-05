@@ -34,6 +34,10 @@ var tipo_punto = {
     ruta_industrial: 'marker',
     puntos_wifi: 'viewpoint', // este no funca
     piscinas_publicas: 'swimming',
+    bar: 'bar',
+    cafe: 'cafe',
+    tienda: 'grocery',
+    plaza: 'monument',
 };
 
 var map;
@@ -175,7 +179,11 @@ function cargaContacto() {
             $(".et_pb_row_1").append($('<div>').attr("id", "datos_renfe_estaciones"));
 
             $(".et_pb_row_1").append('<hr>');
-            cargarFourSquare();
+            // a veces carga muy rapido y se adelanta al mapa y por eso da error
+            setTimeout(
+                function () {
+                    cargarFourSquare();
+                }, 1000);
         },
         error: function (errorMessage) {
             console.log("error_wikipedia");
@@ -462,7 +470,7 @@ function cargarMapa(id_div_mapa) {
                 // console.log('fin layers');
             }
         });
-
+        // cargarFourSquare();
     });
 }
 
@@ -679,7 +687,7 @@ function cargarFourSquare() {
         success: function (data) {
             // console.log("ini data foursquere");
             // console.log(data);
-            // console.log(data.response.groups[0].items);
+            console.log(data.response.groups[0].items);
             // console.log("fin data foursquere");
             var foursquare_data = {};
             foursquare_data['categoria'] = "foursquare_data";
@@ -688,7 +696,7 @@ function cargarFourSquare() {
             for (i = 0; i < data.response.groups[0].items.length; i++) {
                 var item_data_foursquare = {};
                 var item_data_foursquare_properties = {};
-                item_data_foursquare_properties['icon'] = tipo_punto.triangulo;
+                item_data_foursquare_properties['icon'] = clasificarCategoriaFourSquare((data.response.groups[0].items[i].venue.categories[0].name).toLowerCase());
                 var item_data_foursquare_geometry = {};
                 item_data_foursquare_properties['direccion'] = data.response.groups[0].items[i].venue.location.address;
                 item_data_foursquare_properties['nombre'] = data.response.groups[0].items[i].venue.name;
@@ -710,4 +718,45 @@ function cargarFourSquare() {
             console.log(errorMessage);
         }
     });
+}
+
+function clasificarCategoriaFourSquare(nombre_icono) {
+    var icono;
+    if ((nombre_icono).includes("restaurant") ||
+        (nombre_icono).includes("bistr") ||
+        (nombre_icono).includes("pizz")) {
+        icono = tipo_punto.restaurante;
+    }
+    else if ((nombre_icono).includes("pub") ||
+        (nombre_icono).includes("bar")) {
+        icono = tipo_punto.bar;
+    }
+    else if ((nombre_icono).includes("farmacia")) {
+        icono = tipo_punto.farmacias;
+    }
+    else if ((nombre_icono).includes("caf")) {
+        icono = tipo_punto.cafe;
+    }
+    else if ((nombre_icono).includes("tienda")) {
+        icono = tipo_punto.tienda;
+    }
+    else if ((nombre_icono).includes("hotel")) {
+        icono = tipo_punto.hoteles;
+    }
+    else if ((nombre_icono).includes("médico")) {
+        icono = tipo_punto.centros_salud;
+    }
+    else if ((nombre_icono).includes("parque")) {
+        icono = tipo_punto.parque;
+    }
+    else if ((nombre_icono).includes("plaza")) {
+        icono = tipo_punto.plaza;
+    }
+    else {
+        icono = tipo_punto.triangulo;
+
+        console.log("---");
+        console.log(nombre_icono);
+    }
+    return icono;
 }
