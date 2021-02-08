@@ -38,6 +38,7 @@ var tipo_punto = {
     cafe: 'cafe',
     tienda: 'grocery',
     plaza: 'monument',
+    panaderia: 'bakery',
 };
 
 var map;
@@ -182,7 +183,8 @@ function cargaContacto() {
             // a veces carga muy rapido y se adelanta al mapa y por eso da error
             setTimeout(
                 function () {
-                    cargarFourSquare();
+                    // cargarFourSquare();
+                    cargarYelp();
                 }, 1000);
         },
         error: function (errorMessage) {
@@ -724,7 +726,10 @@ function clasificarCategoriaFourSquare(nombre_icono) {
     var icono;
     if ((nombre_icono).includes("restaurant") ||
         (nombre_icono).includes("bistr") ||
-        (nombre_icono).includes("pizz")) {
+        (nombre_icono).includes("pizz") ||
+        (nombre_icono).includes("spanish") ||
+        (nombre_icono).includes("italian") ||
+        (nombre_icono).includes("mediterranean")) {
         icono = tipo_punto.restaurante;
     }
     else if ((nombre_icono).includes("pub") ||
@@ -734,7 +739,8 @@ function clasificarCategoriaFourSquare(nombre_icono) {
     else if ((nombre_icono).includes("farmacia")) {
         icono = tipo_punto.farmacias;
     }
-    else if ((nombre_icono).includes("caf")) {
+    else if ((nombre_icono).includes("caf") ||
+        (nombre_icono).includes("coffee")) {
         icono = tipo_punto.cafe;
     }
     else if ((nombre_icono).includes("tienda")) {
@@ -752,6 +758,9 @@ function clasificarCategoriaFourSquare(nombre_icono) {
     else if ((nombre_icono).includes("plaza")) {
         icono = tipo_punto.plaza;
     }
+    else if ((nombre_icono).includes("baker")) {
+        icono = tipo_punto.panaderia;
+    }
     else {
         icono = tipo_punto.triangulo;
 
@@ -759,4 +768,54 @@ function clasificarCategoriaFourSquare(nombre_icono) {
         console.log(nombre_icono);
     }
     return icono;
+}
+
+function cargarYelp() {
+
+    // coordenadas Alcoi
+    var latitud = 38.7054500;
+    var longitud = -0.4743200;
+    var api_key = "NV-nvnwBNhxvr2fao_Zr5x9tmvBZ6Kw2f0FqEE_j677g9amElOmvcGgibpw9oJEhX8ctk-s9-fQHHwsYTemexCa_BRsfMVaEWFPxqBTNLi17YiYc5Ja1EaCb4HMdYHYx";
+    $.ajax({
+        url: proxy_cors + 'https://api.yelp.com/v3/businesses/search?latitude=' + latitud + '&longitude=' + longitud + '&limit=50',
+        // url: proxy_cors + 'https://api.yelp.com/v3/businesses/search?location=alcoi',
+        type: "get",
+        dataType: 'json',
+        headers: {
+            'Authorization': 'Bearer ' + api_key,
+        },
+        success: function (data) {
+            // console.log("ini data yelp");
+            // console.log(data);
+            // console.log("fin data yelp");
+            var yelp_data = {};
+            yelp_data['categoria'] = "yelp_data";
+            yelp_data['type'] = 'FeatureCollection';
+            yelp_data['features'] = [];
+            for (i = 0; i < data.businesses.length; i++) {
+                var item_data_yelp = {};
+                var item_data_yelp_properties = {};
+                item_data_yelp_properties['icon'] = clasificarCategoriaFourSquare((data.businesses[i].categories[0].alias).toLowerCase());
+                // item_data_yelp_properties['icon'] = tipo_punto.triangulo;
+                var item_data_yelp_geometry = {};
+                item_data_yelp_properties['direccion'] = data.businesses[i].location.address1;
+                item_data_yelp_properties['nombre'] = data.businesses[i].name;
+                item_data_yelp_properties['info_adicional'] = data.businesses[i].categories[0].title;
+
+                item_data_yelp_geometry['type'] = 'Point';
+                item_data_yelp_geometry['coordinates'] = [data.businesses[i].coordinates.longitude, data.businesses[i].coordinates.latitude];
+
+                item_data_yelp['properties'] = item_data_yelp_properties;
+                item_data_yelp['geometry'] = item_data_yelp_geometry;
+                yelp_data['features'].push(item_data_yelp);
+            }
+
+            // console.log(yelp_data);
+            pintarPuntosMapa(yelp_data, 'yelp_data');
+        },
+        error: function (errorMessage) {
+            console.log("error_data_yelp");
+            console.log(errorMessage);
+        }
+    });
 }
