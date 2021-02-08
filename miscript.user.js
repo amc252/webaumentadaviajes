@@ -39,6 +39,7 @@ var tipo_punto = {
     tienda: 'grocery',
     plaza: 'monument',
     panaderia: 'bakery',
+    heladeria: 'ice-cream',
 };
 
 var map;
@@ -183,7 +184,7 @@ function cargaContacto() {
             // a veces carga muy rapido y se adelanta al mapa y por eso da error
             setTimeout(
                 function () {
-                    // cargarFourSquare();
+                    cargarFourSquare();
                     cargarYelp();
                 }, 1000);
         },
@@ -689,7 +690,7 @@ function cargarFourSquare() {
         success: function (data) {
             // console.log("ini data foursquere");
             // console.log(data);
-            console.log(data.response.groups[0].items);
+            // console.log(data.response.groups[0].items);
             // console.log("fin data foursquere");
             var foursquare_data = {};
             foursquare_data['categoria'] = "foursquare_data";
@@ -729,7 +730,11 @@ function clasificarCategoriaFourSquare(nombre_icono) {
         (nombre_icono).includes("pizz") ||
         (nombre_icono).includes("spanish") ||
         (nombre_icono).includes("italian") ||
-        (nombre_icono).includes("mediterranean")) {
+        (nombre_icono).includes("mediterranean") ||
+        (nombre_icono).includes("arro") ||
+        (nombre_icono).includes("catalan") ||
+        (nombre_icono).includes("chinese") ||
+        (nombre_icono).includes("cuisine")) {
         icono = tipo_punto.restaurante;
     }
     else if ((nombre_icono).includes("pub") ||
@@ -761,6 +766,12 @@ function clasificarCategoriaFourSquare(nombre_icono) {
     else if ((nombre_icono).includes("baker")) {
         icono = tipo_punto.panaderia;
     }
+    else if ((nombre_icono).includes("icecream")) {
+        icono = tipo_punto.heladeria;
+    }
+    else if ((nombre_icono).includes("muse")) {
+        icono = tipo_punto.museo;
+    }
     else {
         icono = tipo_punto.triangulo;
 
@@ -777,7 +788,7 @@ function cargarYelp() {
     var longitud = -0.4743200;
     var api_key = "NV-nvnwBNhxvr2fao_Zr5x9tmvBZ6Kw2f0FqEE_j677g9amElOmvcGgibpw9oJEhX8ctk-s9-fQHHwsYTemexCa_BRsfMVaEWFPxqBTNLi17YiYc5Ja1EaCb4HMdYHYx";
     $.ajax({
-        url: proxy_cors + 'https://api.yelp.com/v3/businesses/search?latitude=' + latitud + '&longitude=' + longitud + '&limit=50',
+        url: proxy_cors + 'https://api.yelp.com/v3/businesses/search?latitude=' + latitud + '&longitude=' + longitud + '&limit=50', //&radius=40000
         // url: proxy_cors + 'https://api.yelp.com/v3/businesses/search?location=alcoi',
         type: "get",
         dataType: 'json',
