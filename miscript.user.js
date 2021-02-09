@@ -40,6 +40,7 @@ var tipo_punto = {
     plaza: 'monument',
     panaderia: 'bakery',
     heladeria: 'ice-cream',
+    gato: 'cat', // esto es la prueba de poner iconos propios
 };
 
 var map;
@@ -217,16 +218,16 @@ function crearCheckBoxMapa() {
             borrarPuntosMapa('parques');
         }
     });
-    $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_recarga_electrica').attr('type', 'checkbox')).append('Recarga Electrica');
-    $('#cb_recarga_electrica').change(function () {
-        if (this.checked) {
-            // cargar recarga_electrica en el mapa
-            cargarOpenDataAlcoi("https://opendata.alcoi.org/data/dataset/64897e59-7fee-4511-9d5c-b8513ead0782/resource/c667d555-a05d-4cba-ac11-8172c0fbbdc3/download/recarga_electrica.kml", "recarga_electrica", tipo_punto.recarga_electrica);
-        }
-        else {
-            borrarPuntosMapa('recarga_electrica');
-        }
-    });
+    // $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_recarga_electrica').attr('type', 'checkbox')).append('Recarga Electrica');
+    // $('#cb_recarga_electrica').change(function () {
+    //     if (this.checked) {
+    //         // cargar recarga_electrica en el mapa
+    //         cargarOpenDataAlcoi("https://opendata.alcoi.org/data/dataset/64897e59-7fee-4511-9d5c-b8513ead0782/resource/c667d555-a05d-4cba-ac11-8172c0fbbdc3/download/recarga_electrica.kml", "recarga_electrica", tipo_punto.recarga_electrica);
+    //     }
+    //     else {
+    //         borrarPuntosMapa('recarga_electrica');
+    //     }
+    // });
     $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_centros_asistencia').attr('type', 'checkbox')).append('Centros de Asistencia');
     $('#cb_centros_asistencia').change(function () {
         if (this.checked) {
@@ -247,26 +248,26 @@ function crearCheckBoxMapa() {
             borrarPuntosMapa('centros_salud');
         }
     });
-    $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_clinica_privada').attr('type', 'checkbox')).append('Clínica privada');
-    $('#cb_clinica_privada').change(function () {
-        if (this.checked) {
-            // cargar clinica_privada en el mapa
-            cargarOpenDataAlcoi("https://opendata.alcoi.org/data/es/dataset/2810577f-9625-4dbc-ad29-cc1c82381399/resource/afb7dcc9-7171-42d2-90f0-c05efd3e49fc/download/clinica_privada.kml", "clinica_privada", tipo_punto.clinica_privada);
-        }
-        else {
-            borrarPuntosMapa('clinica_privada');
-        }
-    });
-    $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_centros_deportivos').attr('type', 'checkbox')).append('Centros Deportivos');
-    $('#cb_centros_deportivos').change(function () {
-        if (this.checked) {
-            // cargar centros_deportivos en el mapa
-            cargarOpenDataAlcoi("https://opendata.alcoi.org/data/dataset/73088621-45b9-41a0-9060-c90ab20daf76/resource/f461d0c0-8d6a-43df-b0fa-0c4437732c9a/download/deporte.kml", "centros_deportivos", tipo_punto.centros_deportivos);
-        }
-        else {
-            borrarPuntosMapa('centros_deportivos');
-        }
-    });
+    // $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_clinica_privada').attr('type', 'checkbox')).append('Clínica privada');
+    // $('#cb_clinica_privada').change(function () {
+    //     if (this.checked) {
+    //         // cargar clinica_privada en el mapa
+    //         cargarOpenDataAlcoi("https://opendata.alcoi.org/data/es/dataset/2810577f-9625-4dbc-ad29-cc1c82381399/resource/afb7dcc9-7171-42d2-90f0-c05efd3e49fc/download/clinica_privada.kml", "clinica_privada", tipo_punto.clinica_privada);
+    //     }
+    //     else {
+    //         borrarPuntosMapa('clinica_privada');
+    //     }
+    // });
+    // $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_centros_deportivos').attr('type', 'checkbox')).append('Centros Deportivos');
+    // $('#cb_centros_deportivos').change(function () {
+    //     if (this.checked) {
+    //         // cargar centros_deportivos en el mapa
+    //         cargarOpenDataAlcoi("https://opendata.alcoi.org/data/dataset/73088621-45b9-41a0-9060-c90ab20daf76/resource/f461d0c0-8d6a-43df-b0fa-0c4437732c9a/download/deporte.kml", "centros_deportivos", tipo_punto.centros_deportivos);
+    //     }
+    //     else {
+    //         borrarPuntosMapa('centros_deportivos');
+    //     }
+    // });
     $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_hoteles').attr('type', 'checkbox')).append('Hoteles');
     $('#cb_hoteles').change(function () {
         if (this.checked) {
@@ -367,16 +368,16 @@ function crearCheckBoxMapa() {
             borrarPuntosMapa('ruta_industrial');
         }
     });
-    $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_puntos_wifi').attr('type', 'checkbox')).append('Puntos WIFI');
-    $('#cb_puntos_wifi').change(function () {
-        if (this.checked) {
-            // cargar puntos_wifi en el mapa
-            cargarOpenDataAlcoi("https://opendata.alcoi.org/data/dataset/87ffa879-1fe1-48e0-91e8-c1e04a1729ef/resource/7fca4f39-fff3-40dd-80fb-d8d905664882/download/puntoswifi.kml", "puntos_wifi", tipo_punto.puntos_wifi);
-        }
-        else {
-            borrarPuntosMapa('puntos_wifi');
-        }
-    });
+    // $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_puntos_wifi').attr('type', 'checkbox')).append('Puntos WIFI');
+    // $('#cb_puntos_wifi').change(function () {
+    //     if (this.checked) {
+    //         // cargar puntos_wifi en el mapa
+    //         cargarOpenDataAlcoi("https://opendata.alcoi.org/data/dataset/87ffa879-1fe1-48e0-91e8-c1e04a1729ef/resource/7fca4f39-fff3-40dd-80fb-d8d905664882/download/puntoswifi.kml", "puntos_wifi", tipo_punto.puntos_wifi);
+    //     }
+    //     else {
+    //         borrarPuntosMapa('puntos_wifi');
+    //     }
+    // });
     $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_piscinas_publicas').attr('type', 'checkbox')).append('Piscinas Públicas');
     $('#cb_piscinas_publicas').change(function () {
         if (this.checked) {
@@ -473,6 +474,16 @@ function cargarMapa(id_div_mapa) {
                 // console.log('fin layers');
             }
         });
+        // cargar una imagen como icono
+        // map.on('load', function () {
+        //     map.loadImage(
+        //         'https://upload.wikimedia.org/wikipedia/commons/7/7c/201408_cat.png',
+        //         function (error, image) {
+        //             if (error) { throw error };
+        //             map.addImage('cat-15', image);
+        //         }
+        //     );
+        // });
         // cargarFourSquare();
     });
 }
