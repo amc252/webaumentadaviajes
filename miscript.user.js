@@ -710,7 +710,7 @@ function cargarFourSquare() {
             for (i = 0; i < data.response.groups[0].items.length; i++) {
                 var item_data_foursquare = {};
                 var item_data_foursquare_properties = {};
-                item_data_foursquare_properties['icon'] = clasificarCategoriaFourSquare((data.response.groups[0].items[i].venue.categories[0].name).toLowerCase());
+                item_data_foursquare_properties['icon'] = clasificarCategoria((data.response.groups[0].items[i].venue.categories[0].name).toLowerCase());
                 var item_data_foursquare_geometry = {};
                 item_data_foursquare_properties['direccion'] = data.response.groups[0].items[i].venue.location.address;
                 item_data_foursquare_properties['nombre'] = data.response.groups[0].items[i].venue.name;
@@ -734,7 +734,7 @@ function cargarFourSquare() {
     });
 }
 
-function clasificarCategoriaFourSquare(nombre_icono) {
+function clasificarCategoria(nombre_icono) {
     var icono;
     if ((nombre_icono).includes("restaurant") ||
         (nombre_icono).includes("bistr") ||
@@ -800,7 +800,7 @@ function cargarYelp() {
     var api_key = "NV-nvnwBNhxvr2fao_Zr5x9tmvBZ6Kw2f0FqEE_j677g9amElOmvcGgibpw9oJEhX8ctk-s9-fQHHwsYTemexCa_BRsfMVaEWFPxqBTNLi17YiYc5Ja1EaCb4HMdYHYx";
     $.ajax({
         url: proxy_cors + 'https://api.yelp.com/v3/businesses/search?latitude=' + latitud + '&longitude=' + longitud + '&limit=50', //&radius=40000
-        // url: proxy_cors + 'https://api.yelp.com/v3/businesses/search?location=alcoi',
+        // url: proxy_cors + 'https://api.yelp.com/v3/businesses/search?location=santa pola&limit=50',
         type: "get",
         dataType: 'json',
         headers: {
@@ -817,7 +817,7 @@ function cargarYelp() {
             for (i = 0; i < data.businesses.length; i++) {
                 var item_data_yelp = {};
                 var item_data_yelp_properties = {};
-                item_data_yelp_properties['icon'] = clasificarCategoriaFourSquare((data.businesses[i].categories[0].alias).toLowerCase());
+                item_data_yelp_properties['icon'] = clasificarCategoria((data.businesses[i].categories[0].alias).toLowerCase());
                 // item_data_yelp_properties['icon'] = tipo_punto.triangulo;
                 var item_data_yelp_geometry = {};
                 item_data_yelp_properties['direccion'] = data.businesses[i].location.address1;
