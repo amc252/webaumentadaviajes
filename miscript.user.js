@@ -73,6 +73,21 @@ $(function () {
                 //     $("body").append("<p>Result</p>");
                 // });
             }));
+    $('#menu-item-161754 > .sub-menu').append(
+        $('<li>')
+            .attr("id", "menu-item-cercanias-renfe")
+            .attr("class", "menu-item menu-item-type-post_type menu-item-object-page menu-item-cercanias-renfe")
+            .append(
+                $('<a>').attr('href', "https://www.alicanteturismo.com/cercanias-renfe").append(
+                    $('<span>').attr('class', 'tab').append("Cercanias RENFE")
+                ))
+            .click(function () {
+                alert("Cercanias RENFE");
+                // var win = window.open("result.html");
+                // $(win).load(function () {
+                //     $("body").append("<p>Result</p>");
+                // });
+            }));
 
     // console.log("cargó todo");
 });
@@ -93,7 +108,8 @@ $(document).ready(function () {
     else {
         // alert("si existe la pagina");
         if (pathname == "/contacto/") {
-            cargaContacto();
+            // cargaContacto();
+            cargaCercaniasRenfe();
         }
     }
 });
@@ -840,4 +856,74 @@ function cargarYelp() {
             console.log(errorMessage);
         }
     });
+}
+
+function cargaCercaniasRenfe() {
+    //esto es porque desaparecen unas imagenes sin motivo
+    $(".jetpack-lazy-image").removeAttr("data-lazy-src");
+    $(".jetpack-lazy-image").removeAttr("srcset");
+
+    $("#mapa-contacto").remove();
+
+    $(".et_pb_row_2").empty();
+    $(".et_pb_row_3").empty();
+    $(".et_pb_row_1").empty();
+    $(".et_pb_row_1")
+        .append($('<a>').attr('href', "https://es.wikipedia.org/wiki/Alicante").append(
+            $('<span>').append("Enlace Wikipedia1")
+        ));
+
+    $.ajax({
+        url: "https://es.wikipedia.org/w/api.php?origin=*&format=json&action=parse&page=Anexo:Municipios_de_la_provincia_de_Alicante",
+        type: "get",
+        dataType: "jsonp",
+        success: function (data) {
+            console.log("princiupio data");
+            console.log(data);
+            console.log("fin data");
+            // $(".et_pb_row_1").append($('<p>').append(data.parse.title));
+            // $(".et_pb_row_1").append('<hr>');
+
+
+            // console.log(data.parse.images[6]);
+            // $.ajax({
+            //     url: "https://es.wikipedia.org/w/api.php?origin=*&format=json&action=query&titles=File:" + data.parse.images[6] + "&prop=imageinfo&iiprop=url",
+            //     type: "get",
+            //     dataType: "jsonp",
+            //     success: function (data_image) {
+            //         // console.log(data_image);
+            //         // console.log(data_image.query.pages[-1].imageinfo[0].url);
+
+            //         $("#image_wiki").append("ini foto");
+            //         $("#image_wiki").append($('<img>').attr('width', 150).attr("src", data_image.query.pages[-1].imageinfo[0].url));
+            //         $("#image_wiki").append("fin foto");
+            //     },
+            //     error: function (errorMessage) {
+            //         console.log("error_imagen");
+            //         console.log(errorMessage);
+            //     }
+            // });
+            // $(".et_pb_row_1").append($('<div>').attr("id", "image_wiki"));
+            // $(".et_pb_row_1").append('<hr>');
+
+            $(".et_pb_row_1").append('<hr>');
+            //carga el articulo entero de la wikipedia y lo pone bonito
+            var markup = data.parse.text["*"];
+            var i = $('<div></div>').html(markup);
+            console.log("ini i");
+            console.log(markup);
+            console.log("fin i");
+            // $(".et_pb_row_1").append(i);
+            $(".et_pb_row_1").append($('<div>').attr("id", "info_wiki").append(markup));
+            $(".et_pb_row_1").append('<hr>');
+            $("#info_wiki > .mw-parser-output").children().not(".wikitable").remove();
+            // $(".wikitable").remove();
+
+        },
+        error: function (errorMessage) {
+            console.log("error_wikipedia");
+            console.log(errorMessage);
+        }
+    });
+
 }
