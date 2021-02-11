@@ -910,9 +910,6 @@ function cargaCercaniasRenfe() {
             //carga el articulo entero de la wikipedia y lo pone bonito
             var markup = data.parse.text["*"];
             var i = $('<div></div>').html(markup);
-            console.log("ini i");
-            console.log(markup);
-            console.log("fin i");
             // $(".et_pb_row_1").append(i);
             $(".et_pb_row_1").append($('<div>').attr("id", "info_wiki").append(markup));
             $(".et_pb_row_1").append('<hr>');
@@ -922,6 +919,46 @@ function cargaCercaniasRenfe() {
         },
         error: function (errorMessage) {
             console.log("error_wikipedia");
+            console.log(errorMessage);
+        }
+    });
+
+    $.ajax({
+        // url: "https://www.el-tiempo.net/api/json/v2/provincias/03/municipios",
+        url: "https://www.el-tiempo.net/api/json/v2/provincias/03",
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            console.log("ini timepo");
+            console.log(data);
+            console.log("fin timepo");
+
+
+        },
+        error: function (errorMessage) {
+            console.log("error_tiempo");
+            console.log(errorMessage);
+        }
+    });
+
+    var api_key_aemet = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbWMyNTJAZ2Nsb3VkLnVhLmVzIiwianRpIjoiYmZlYzQ1ZTQtZGJjMC00MzM2LWJjZTUtMzVmNWM4NDk3ODRiIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE2MTMwNjE5OTAsInVzZXJJZCI6ImJmZWM0NWU0LWRiYzAtNDMzNi1iY2U1LTM1ZjVjODQ5Nzg0YiIsInJvbGUiOiIifQ.UHJNxiTqZCHD3p7AuKQsgamZi4_MLTvAR03xcci7g0w";
+    $.ajax({
+        url: proxy_cors + "https://opendata.aemet.es/opendata/api/valores/climatologicos/inventarioestaciones/todasestaciones/?api_key=" + api_key_aemet,
+        type: "get",
+        async: true,
+        crossDomain: true,
+        headers: {
+            "cache-control": "no-cache"
+        },
+        success: function (data) {
+            console.log("ini timepo2");
+            console.log(data);
+            console.log("fin timepo2");
+
+
+        },
+        error: function (errorMessage) {
+            console.log("error_tiempo");
             console.log(errorMessage);
         }
     });
