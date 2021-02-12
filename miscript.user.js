@@ -88,6 +88,21 @@ $(function () {
                 //     $("body").append("<p>Result</p>");
                 // });
             }));
+    $('#menu-item-161754 > .sub-menu').append(
+        $('<li>')
+            .attr("id", "menu-item-tiempo-alicante")
+            .attr("class", "menu-item menu-item-type-post_type menu-item-object-page menu-item-tiempo-alicante")
+            .append(
+                $('<a>').attr('href', "https://www.alicanteturismo.com/tiempo-alicante").append(
+                    $('<span>').attr('class', 'tab').append("Tiempo")
+                ))
+            .click(function () {
+                alert("Tiempo");
+                // var win = window.open("result.html");
+                // $(win).load(function () {
+                //     $("body").append("<p>Result</p>");
+                // });
+            }));
 
     // console.log("cargó todo");
 });
@@ -928,11 +943,38 @@ function cargaCercaniasRenfe() {
         url: "https://www.el-tiempo.net/api/json/v2/provincias/03",
         type: "get",
         dataType: "json",
-        success: function (data) {
-            console.log("ini timepo");
-            console.log(data);
-            console.log("fin timepo");
+        success: function (data_tiempo) {
+            // console.log("ini timepo");
+            // console.log(data);
+            // console.log("fin timepo");
+            $.ajax({
+                url: "https://www.el-tiempo.net/api/json/v2/provincias/03/municipios",
+                type: "get",
+                dataType: "json",
+                success: function (data_tiempo_municipios) {
+                    console.log("ini timepo");
+                    console.log(data_tiempo);
+                    console.log(data_tiempo_municipios);
+                    var id_ciudades = [];
+                    data_tiempo.ciudades.forEach(function (ciud) {
+                        var aux_ciud = ciud.id + "000000";
+                        id_ciudades.push(ciud.id + "000000");
+                        data_tiempo_municipios.municipios.forEach(function (muni) {
+                            if (aux_ciud == muni.CODIGOINE) {
+                                console.log("nombre capital");
+                                console.log(muni.NOMBRE_CAPITAL);
+                            }
+                        });
+                    });
 
+                    console.log(id_ciudades);
+                    console.log("fin timepo");
+                },
+                error: function (errorMessage) {
+                    console.log("error_tiempo");
+                    console.log(errorMessage);
+                }
+            });
 
         },
         error: function (errorMessage) {
@@ -943,7 +985,10 @@ function cargaCercaniasRenfe() {
 
     var api_key_aemet = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbWMyNTJAZ2Nsb3VkLnVhLmVzIiwianRpIjoiYmZlYzQ1ZTQtZGJjMC00MzM2LWJjZTUtMzVmNWM4NDk3ODRiIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE2MTMwNjE5OTAsInVzZXJJZCI6ImJmZWM0NWU0LWRiYzAtNDMzNi1iY2U1LTM1ZjVjODQ5Nzg0YiIsInJvbGUiOiIifQ.UHJNxiTqZCHD3p7AuKQsgamZi4_MLTvAR03xcci7g0w";
     $.ajax({
-        url: proxy_cors + "https://opendata.aemet.es/opendata/api/valores/climatologicos/inventarioestaciones/todasestaciones/?api_key=" + api_key_aemet,
+        // url: proxy_cors + "https://opendata.aemet.es/opendata/api/valores/climatologicos/inventarioestaciones/todasestaciones/?api_key=" + api_key_aemet,
+        url: proxy_cors + "https://opendata.aemet.es/opendata/api/prediccion/provincia/hoy/03?api_key=" + api_key_aemet,
+        // /api/prediccion/provincia/hoy/{provincia}
+        // /api/prediccion/provincia/manana/{provincia}
         type: "get",
         async: true,
         crossDomain: true,
@@ -951,10 +996,35 @@ function cargaCercaniasRenfe() {
             "cache-control": "no-cache"
         },
         success: function (data) {
-            console.log("ini timepo2");
-            console.log(data);
-            console.log("fin timepo2");
+            // console.log("ini timepo2");
+            // console.log(data);
+            // console.log("fin timepo2");
 
+            $.ajax({
+                url: data.datos,
+                type: "get",
+                async: true,
+                crossDomain: true,
+                headers: {
+                    "cache-control": "no-cache"
+                },
+                success: function (data) {
+                    // console.log("ini timepo3");
+                    // console.log(data);
+                    // console.log(data[0].nombre);
+                    // console.log(data[0].latitud);
+                    // console.log(data[0].longitud);
+                    // console.log(gradosADecimal(41, 35, 15, "N"));
+                    // console.log(gradosADecimal(02, 32, 24, "E"));
+                    // console.log("fin timepo3");
+
+
+                },
+                error: function (errorMessage) {
+                    console.log("error_tiempo");
+                    console.log(errorMessage);
+                }
+            });
 
         },
         error: function (errorMessage) {
@@ -963,4 +1033,14 @@ function cargaCercaniasRenfe() {
         }
     });
 
+}
+
+function gradosADecimal(grados, minutos, segundos, direccion) {
+    direccion.toUpperCase();
+    var decimal = grados + minutos / 60 + segundos / (60 * 60);
+
+    if (direccion == "S" || direccion == "W") {
+        decimal = decimal * -1;
+    }
+    return decimal;
 }
