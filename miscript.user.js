@@ -75,14 +75,14 @@ $(function () {
             }));
     $('#menu-item-161754 > .sub-menu').append(
         $('<li>')
-            .attr("id", "menu-item-cercanias-renfe")
-            .attr("class", "menu-item menu-item-type-post_type menu-item-object-page menu-item-cercanias-renfe")
+            .attr("id", "menu-item-tiempo")
+            .attr("class", "menu-item menu-item-type-post_type menu-item-object-page menu-item-tiempo")
             .append(
-                $('<a>').attr('href', "https://www.alicanteturismo.com/cercanias-renfe").append(
-                    $('<span>').attr('class', 'tab').append("Cercanias RENFE")
+                $('<a>').attr('href', "https://www.alicanteturismo.com/tiempo").append(
+                    $('<span>').attr('class', 'tab').append("Tiempo Alicante")
                 ))
             .click(function () {
-                alert("Cercanias RENFE");
+                alert("Tiempo Alicante");
                 // var win = window.open("result.html");
                 // $(win).load(function () {
                 //     $("body").append("<p>Result</p>");
@@ -123,8 +123,12 @@ $(document).ready(function () {
     else {
         // alert("si existe la pagina");
         if (pathname == "/contacto/") {
-            // cargaContacto();
-            cargaCercaniasRenfe();
+            cargaContacto();
+
+            setTimeout(
+                function () {
+                    cargaTiempo();
+                }, 1000);
         }
     }
 });
@@ -216,8 +220,8 @@ function cargaContacto() {
             // a veces carga muy rapido y se adelanta al mapa y por eso da error
             setTimeout(
                 function () {
-                    cargarFourSquare();
-                    cargarYelp();
+                    // cargarFourSquare();
+                    // cargarYelp();
                 }, 1000);
         },
         error: function (errorMessage) {
@@ -873,20 +877,20 @@ function cargarYelp() {
     });
 }
 
-function cargaCercaniasRenfe() {
+function cargaTiempo() {
     //esto es porque desaparecen unas imagenes sin motivo
-    $(".jetpack-lazy-image").removeAttr("data-lazy-src");
-    $(".jetpack-lazy-image").removeAttr("srcset");
+    // $(".jetpack-lazy-image").removeAttr("data-lazy-src");
+    // $(".jetpack-lazy-image").removeAttr("srcset");
 
-    $("#mapa-contacto").remove();
+    // $("#mapa-contacto").remove();
 
-    $(".et_pb_row_2").empty();
-    $(".et_pb_row_3").empty();
-    $(".et_pb_row_1").empty();
-    $(".et_pb_row_1")
-        .append($('<a>').attr('href', "https://es.wikipedia.org/wiki/Alicante").append(
-            $('<span>').append("Enlace Wikipedia1")
-        ));
+    // $(".et_pb_row_2").empty();
+    // $(".et_pb_row_3").empty();
+    // $(".et_pb_row_1").empty();
+    // $(".et_pb_row_1")
+    //     .append($('<a>').attr('href', "https://es.wikipedia.org/wiki/Alicante").append(
+    //         $('<span>').append("Enlace Wikipedia1")
+    //     ));
 
     $.ajax({
         url: "https://es.wikipedia.org/w/api.php?origin=*&format=json&action=parse&page=Anexo:Municipios_de_la_provincia_de_Alicante",
@@ -952,20 +956,49 @@ function cargaCercaniasRenfe() {
                 type: "get",
                 dataType: "json",
                 success: function (data_tiempo_municipios) {
-                    console.log("ini timepo");
-                    console.log(data_tiempo);
-                    console.log(data_tiempo_municipios);
+                    // console.log("ini timepo");
+                    // console.log(data_tiempo);
+                    // console.log(data_tiempo_municipios);
                     var id_ciudades = [];
+
+                    var tiempo_data = {};
+                    tiempo_data['categoria'] = "tiempo_data";
+                    tiempo_data['type'] = 'FeatureCollection';
+                    tiempo_data['features'] = [];
+
                     data_tiempo.ciudades.forEach(function (ciud) {
                         var aux_ciud = ciud.id + "000000";
                         id_ciudades.push(ciud.id + "000000");
+
+
                         data_tiempo_municipios.municipios.forEach(function (muni) {
                             if (aux_ciud == muni.CODIGOINE) {
-                                console.log("nombre capital");
-                                console.log(muni.NOMBRE_CAPITAL);
+                                // console.log("nombre capital");
+                                // console.log(muni.NOMBRE_CAPITAL);
+
+                                var item_data_tiempo = {};
+                                var item_data_tiempo_properties = {};
+                                item_data_tiempo_properties['icon'] = tipo_punto.triangulo;
+                                // item_data_tiempo_properties['icon'] = tipo_punto.triangulo;
+                                var item_data_tiempo_geometry = {};
+                                item_data_tiempo_properties['direccion'] = ciud.stateSky.description;
+                                item_data_tiempo_properties['nombre'] = muni.NOMBRE;
+                                // item_data_tiempo_properties['info_adicional'] = "";
+
+                                item_data_tiempo_geometry['type'] = 'Point';
+                                item_data_tiempo_geometry['coordinates'] = [muni.LONGITUD_ETRS89_REGCAN95, muni.LATITUD_ETRS89_REGCAN95];
+
+                                item_data_tiempo['properties'] = item_data_tiempo_properties;
+                                item_data_tiempo['geometry'] = item_data_tiempo_geometry;
+                                tiempo_data['features'].push(item_data_tiempo);
+
                             }
                         });
+
                     });
+
+                    console.log(tiempo_data);
+                    pintarPuntosMapa(tiempo_data, 'tiempo_data');
 
                     console.log(id_ciudades);
                     console.log("fin timepo");
