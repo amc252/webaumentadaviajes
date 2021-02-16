@@ -943,6 +943,7 @@ function cargaTiempo() {
     });
 
     $.ajax({
+        // url: "https://www.el-tiempo.net/api/json/v2/provincias/03/municipios/03009", // sacando solo de alcoi 03009
         // url: "https://www.el-tiempo.net/api/json/v2/provincias/03/municipios",
         url: "https://www.el-tiempo.net/api/json/v2/provincias/03",
         type: "get",
@@ -1019,9 +1020,10 @@ function cargaTiempo() {
     var api_key_aemet = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbWMyNTJAZ2Nsb3VkLnVhLmVzIiwianRpIjoiYmZlYzQ1ZTQtZGJjMC00MzM2LWJjZTUtMzVmNWM4NDk3ODRiIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE2MTMwNjE5OTAsInVzZXJJZCI6ImJmZWM0NWU0LWRiYzAtNDMzNi1iY2U1LTM1ZjVjODQ5Nzg0YiIsInJvbGUiOiIifQ.UHJNxiTqZCHD3p7AuKQsgamZi4_MLTvAR03xcci7g0w";
     $.ajax({
         // url: proxy_cors + "https://opendata.aemet.es/opendata/api/valores/climatologicos/inventarioestaciones/todasestaciones/?api_key=" + api_key_aemet,
-        url: proxy_cors + "https://opendata.aemet.es/opendata/api/prediccion/provincia/hoy/03?api_key=" + api_key_aemet,
+        // url: proxy_cors + "https://opendata.aemet.es/opendata/api/prediccion/provincia/hoy/03?api_key=" + api_key_aemet,
         // /api/prediccion/provincia/hoy/{provincia}
         // /api/prediccion/provincia/manana/{provincia}
+        url: proxy_cors + "https://opendata.aemet.es/opendata/api/observacion/convencional/todas?api_key=" + api_key_aemet,
         type: "get",
         async: true,
         crossDomain: true,
@@ -1041,15 +1043,16 @@ function cargaTiempo() {
                 headers: {
                     "cache-control": "no-cache"
                 },
-                success: function (data) {
-                    // console.log("ini timepo3");
-                    // console.log(data);
+                dataType: "json",
+                success: function (data_consulta) {
+                    console.log("ini timepo3");
+                    console.log(data_consulta);
                     // console.log(data[0].nombre);
                     // console.log(data[0].latitud);
                     // console.log(data[0].longitud);
                     // console.log(gradosADecimal(41, 35, 15, "N"));
                     // console.log(gradosADecimal(02, 32, 24, "E"));
-                    // console.log("fin timepo3");
+                    console.log("fin timepo3");
 
 
                 },
