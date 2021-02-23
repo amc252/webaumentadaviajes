@@ -42,6 +42,18 @@ var tipo_punto = {
     heladeria: 'ice-cream',
     gato: 'cat', // esto es la prueba de poner iconos propios
     cuadrado: 'square',
+    sol: 'sun',
+    nubes: 'clouds',
+    parcialmente_nublado_dia: 'partly-cloudy-day',
+    parcialmente_nublado_noche: 'partly-cloudy-night',
+    nubes_relampago: 'cloud-lighting',
+    lluvia_ligera: 'light-rain',
+    lluvia: 'rain',
+    parcialmente_nublado_lluvia: 'partly-cloudy-rain',
+    nieve: 'snow',
+    niebla_noche: 'fog-night',
+    niebla_dia: 'fog-day',
+    viento: 'wind',
 };
 
 var map;
@@ -513,42 +525,101 @@ function cargarMapa(id_div_mapa) {
         // cargar una imagen como icono
         // map.on('load', function () {
         //     map.loadImage(
-        //         'https://upload.wikimedia.org/wikipedia/commons/7/7c/201408_cat.png',
+        //         'https://img.icons8.com/officel/2x/sun.png',
         //         function (error, image) {
         //             if (error) { throw error };
-        //             map.addImage('cat-15', image);
+        //             map.addImage('sun', image);
         //         }
         //     );
         // });
+
+        //cargar los iconos para que esten disponibles en el mapa
+        var id_icono_tiempo = [
+            'sun',
+            'clouds',
+            'partly-cloudy-day',
+            'partly-cloudy-night',
+            'cloud-lighting',
+            'light-rain',
+            'rain',
+            'partly-cloudy-rain',
+            'snow',
+            'fog-night',
+            'fog-day',
+            'wind'
+        ];
+
+        id_icono_tiempo.forEach(function (id) {
+            map.on('load', function () {
+                map.loadImage(
+                    'https://img.icons8.com/officel/2x/' + id + '.png',
+                    function (error, image) {
+                        if (error) { throw error };
+                        map.addImage(id, image);
+                    }
+                );
+            });
+        })
+
         // cargarFourSquare();
     });
 }
 
 function pintarPuntosMapa(conjunto_puntos, id_conjunto_puntos) {
+
     map.addSource(id_conjunto_puntos, {
         'type': 'geojson',
         'data': conjunto_puntos,
     });
 
-    map.addLayer({
-        'id': id_conjunto_puntos,
-        'type': 'symbol',
-        'source': id_conjunto_puntos,
-        'layout': {
-            'icon-image': '{icon}-15',
-            'icon-allow-overlap': true,
-            // 'text-allow-overlap': true,
-            // 'text-field': '{nombre}',
-            'text-size': 12,
-            'text-variable-anchor': ['top'],
-            'text-radial-offset': 0.5,
-            'text-justify': 'center',
-        }
+    // if (map._container.id === "mapa_tiempo") {
+    if (id_conjunto_puntos === "info_tiempo") {
+        map.addLayer({
+            'id': id_conjunto_puntos,
+            'type': 'symbol',
+            'source': id_conjunto_puntos,
+            'layout': {
+                'icon-image': '{icon}',
+                'icon-allow-overlap': true,
+                'icon-size': 0.25,
+                'text-allow-overlap': true,
+                'text-field': '{nombre}',
+                'text-size': 16,
+                'text-variable-anchor': ['left'],
+                'text-radial-offset': 1,
+                'text-justify': 'center',
+            }
+        });
+    } else {
+        map.addLayer({
+            'id': id_conjunto_puntos,
+            'type': 'symbol',
+            'source': id_conjunto_puntos,
+            'layout': {
+                'icon-image': '{icon}-15',
+                'icon-allow-overlap': true,
+                // 'text-allow-overlap': true,
+                // 'text-field': '{nombre}',
+                'text-size': 12,
+                'text-variable-anchor': ['top'],
+                'text-radial-offset': 0.5,
+                'text-justify': 'center',
+            }
+        });
+    }
+
+    var popup_personalizado = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
     });
 
     // evento click en el mapa
     // en los puntos que hay dibujados se abre un popup
-    map.on('click', id_conjunto_puntos, function (e) {
+    // map.on('click', id_conjunto_puntos, function (e) {
+    map.on('mouseenter', id_conjunto_puntos, function (e) {
+
+        map.getCanvas().style.cursor = 'pointer';
+
         var coordinates = e.features[0].geometry.coordinates.slice();
         var nombre = e.features[0].properties.nombre;
         var direccion = e.features[0].properties.direccion;
@@ -572,7 +643,7 @@ function pintarPuntosMapa(conjunto_puntos, id_conjunto_puntos) {
             mas_info = "<p>" + direccion + "</p>";
         }
 
-        var popup_personalizado = "<strong>" + nombre + "</strong>" + mas_info;
+        var popup_personalizado_descripcion = "<strong>" + nombre + "</strong>" + mas_info;
 
         // Ensure that if the map is zoomed out such that multiple
         // copies of the feature are visible, the popup appears
@@ -581,20 +652,23 @@ function pintarPuntosMapa(conjunto_puntos, id_conjunto_puntos) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
 
-        new mapboxgl.Popup()
-            .setLngLat(coordinates)
-            .setHTML(popup_personalizado)
-            .addTo(map);
+        // new mapboxgl.Popup()
+        //     .setLngLat(coordinates)
+        //     .setHTML(popup_personalizado)
+        //     .addTo(map);
+
+        popup_personalizado.setLngLat(coordinates).setHTML(popup_personalizado_descripcion).addTo(map);
     });
 
     // cambia el estilo del puntero si está en el popup
-    map.on('mouseenter', id_conjunto_puntos, function () {
-        map.getCanvas().style.cursor = 'pointer';
-    });
+    // map.on('mouseenter', id_conjunto_puntos, function () {
+    //     map.getCanvas().style.cursor = 'pointer';
+    // });
 
     // lo pone como estaba antes al salir del popup
     map.on('mouseleave', id_conjunto_puntos, function () {
         map.getCanvas().style.cursor = '';
+        popup_personalizado.remove();
     });
 }
 
@@ -983,12 +1057,28 @@ function cargaTiempo() {
                     dataType: "json",
                     success: function (data_consulta) {
                         var hora_ahora = new Date().getHours();
+                        var contador_horas = 0;
                         var peticion_interna_2 = data_consulta[0].prediccion.dia[0].estadoCielo.forEach(function (hora_dia) {
                             if (hora_dia.periodo == hora_ahora.toString()) {
                                 ciud['properties']['direccion'] = hora_ahora + "h: " + hora_dia.descripcion;
+                                ciud['properties']['icon'] = clasificarEstadoCielo(hora_dia.value);
+                                contador_horas++;
+
                             }
+                            else if (contador_horas > 0 && contador_horas < 4) {
+                                ciud['properties']['direccion'] = ciud['properties']['direccion'] + "<br>" + (parseInt(hora_ahora + contador_horas)) + "h: " + hora_dia.descripcion;
+                                contador_horas++;
+                            }
+                            // if (parseInt(hora_ahora) > 20) {
+
+                            // }
                         });
                         promesas.push(peticion_interna_2);
+                        for (dia = 0; contador_horas < 4; contador_horas++) {
+                            var aux_hora_dia = data_consulta[0].prediccion.dia[1].estadoCielo[dia];
+                            ciud['properties']['direccion'] = ciud['properties']['direccion'] + "<br>" + aux_hora_dia.periodo + "h: " + aux_hora_dia.descripcion;
+                            dia++;
+                        }
                     },
                     error: function (errorMessage) {
                         console.log("error_tiempo4");
@@ -1009,7 +1099,6 @@ function cargaTiempo() {
         .then(responseList => {
             setTimeout(
                 function () {
-                    console.log("en el fin de promesas222");
                     pintarPuntosMapa(tiempo_data, "info_tiempo");
                 }, 2000);
         })
@@ -1030,6 +1119,7 @@ function pushCiudadTiempo(array, id, nombre, latitud, longitud) {
     var item_data_tiempo = {};
     var item_data_tiempo_properties = {};
     item_data_tiempo_properties['icon'] = tipo_punto.cuadrado;
+    item_data_tiempo_properties['icon'] = tipo_punto.sol;
     var item_data_tiempo_geometry = {};
     item_data_tiempo_properties['direccion'] = "";
     item_data_tiempo_properties['nombre'] = nombre;
@@ -1044,4 +1134,28 @@ function pushCiudadTiempo(array, id, nombre, latitud, longitud) {
     array['features'].push(item_data_tiempo);
 
     return array;
+}
+
+function clasificarEstadoCielo(codigo_estado) {
+    switch (codigo_estado) {
+        case "11":
+        case "11n":
+            return tipo_punto.sol;
+        case "12":
+        case "12n":
+            return tipo_punto.parcialmente_nublado_dia;
+        case "14":
+        case "14n":
+        case "15":
+        case "15n":
+        case "16":
+        case "16n":
+            return tipo_punto.nubes;
+        case "43":
+        case "46":
+        case "46n":
+            return tipo_punto.parcialmente_nublado_lluvia;
+        default:
+            console.log(codigo_estado);
+    }
 }
