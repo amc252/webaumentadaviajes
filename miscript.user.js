@@ -41,6 +41,7 @@ var tipo_punto = {
     panaderia: 'bakery',
     heladeria: 'ice-cream',
     gato: 'cat', // esto es la prueba de poner iconos propios
+    cuadrado: 'square',
 };
 
 var map;
@@ -887,10 +888,6 @@ function cargaTiempo() {
     // $(".et_pb_row_2").empty();
     // $(".et_pb_row_3").empty();
     // $(".et_pb_row_1").empty();
-    // $(".et_pb_row_1")
-    //     .append($('<a>').attr('href', "https://es.wikipedia.org/wiki/Alicante").append(
-    //         $('<span>').append("Enlace Wikipedia1")
-    //     ));
 
     $.ajax({
         url: "https://es.wikipedia.org/w/api.php?origin=*&format=json&action=parse&page=Anexo:Municipios_de_la_provincia_de_Alicante",
@@ -942,133 +939,80 @@ function cargaTiempo() {
         }
     });
 
-    $.ajax({
-        // url: "https://www.el-tiempo.net/api/json/v2/provincias/03/municipios/03009", // sacando solo de alcoi 03009
-        // url: "https://www.el-tiempo.net/api/json/v2/provincias/03/municipios",
-        url: "https://www.el-tiempo.net/api/json/v2/provincias/03",
-        type: "get",
-        dataType: "json",
-        success: function (data_tiempo) {
-            // console.log("ini timepo");
-            // console.log(data);
-            // console.log("fin timepo");
-            $.ajax({
-                url: "https://www.el-tiempo.net/api/json/v2/provincias/03/municipios",
-                type: "get",
-                dataType: "json",
-                success: function (data_tiempo_municipios) {
-                    // console.log("ini timepo");
-                    // console.log(data_tiempo);
-                    // console.log(data_tiempo_municipios);
-                    var id_ciudades = [];
+    var tiempo_data = {};
+    tiempo_data['categoria'] = "tiempo_data";
+    tiempo_data['type'] = 'FeatureCollection';
+    tiempo_data['features'] = [];
 
-                    var tiempo_data = {};
-                    tiempo_data['categoria'] = "tiempo_data";
-                    tiempo_data['type'] = 'FeatureCollection';
-                    tiempo_data['features'] = [];
-
-                    data_tiempo.ciudades.forEach(function (ciud) {
-                        var aux_ciud = ciud.id + "000000";
-                        id_ciudades.push(ciud.id + "000000");
-
-
-                        data_tiempo_municipios.municipios.forEach(function (muni) {
-                            if (aux_ciud == muni.CODIGOINE) {
-                                // console.log("nombre capital");
-                                // console.log(muni.NOMBRE_CAPITAL);
-
-                                var item_data_tiempo = {};
-                                var item_data_tiempo_properties = {};
-                                item_data_tiempo_properties['icon'] = tipo_punto.triangulo;
-                                // item_data_tiempo_properties['icon'] = tipo_punto.triangulo;
-                                var item_data_tiempo_geometry = {};
-                                item_data_tiempo_properties['direccion'] = ciud.stateSky.description;
-                                item_data_tiempo_properties['nombre'] = muni.NOMBRE;
-                                // item_data_tiempo_properties['info_adicional'] = "";
-
-                                item_data_tiempo_geometry['type'] = 'Point';
-                                item_data_tiempo_geometry['coordinates'] = [muni.LONGITUD_ETRS89_REGCAN95, muni.LATITUD_ETRS89_REGCAN95];
-
-                                item_data_tiempo['properties'] = item_data_tiempo_properties;
-                                item_data_tiempo['geometry'] = item_data_tiempo_geometry;
-                                tiempo_data['features'].push(item_data_tiempo);
-
-                            }
-                        });
-
-                    });
-
-                    console.log(tiempo_data);
-                    pintarPuntosMapa(tiempo_data, 'tiempo_data');
-
-                    console.log(id_ciudades);
-                    console.log("fin timepo");
-                },
-                error: function (errorMessage) {
-                    console.log("error_tiempo");
-                    console.log(errorMessage);
-                }
-            });
-
-        },
-        error: function (errorMessage) {
-            console.log("error_tiempo");
-            console.log(errorMessage);
-        }
-    });
+    pushCiudadTiempo(tiempo_data, "03063", "Denia", "38.8407800", "0.1057400");
+    pushCiudadTiempo(tiempo_data, "03100", "Parcent", "38.7450200", "-0.0644600");
+    pushCiudadTiempo(tiempo_data, "03009", "Alcoy", "38.7054500", "-0.4743200");
+    pushCiudadTiempo(tiempo_data, "03140", "Villena", "38.6373000", "-0.8656800");
+    pushCiudadTiempo(tiempo_data, "03083", "Jijona", "38.5408600", "-0.5026300");
+    pushCiudadTiempo(tiempo_data, "03031", "Benidorm", "38.5381600", "-0.1309800");
+    pushCiudadTiempo(tiempo_data, "03066", "Elda", "38.4778300", "-0.7915700");
+    pushCiudadTiempo(tiempo_data, "03105", "Pinoso", "38.4016400", "-1.0419600");
+    pushCiudadTiempo(tiempo_data, "03014", "Alicante", "38.3451700", "-0.4814900");
+    pushCiudadTiempo(tiempo_data, "03065", "Elche", "38.2621800", "-0.7010700");
+    pushCiudadTiempo(tiempo_data, "03121", "SantaPola", "38.1916500", "-0.5658000");
+    pushCiudadTiempo(tiempo_data, "03099", "Orihuela", "38.0848300", "-0.9440100");
+    pushCiudadTiempo(tiempo_data, "03133", "Torrevieja", "37.9787200", "-0.6822200");
 
     var api_key_aemet = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbWMyNTJAZ2Nsb3VkLnVhLmVzIiwianRpIjoiYmZlYzQ1ZTQtZGJjMC00MzM2LWJjZTUtMzVmNWM4NDk3ODRiIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE2MTMwNjE5OTAsInVzZXJJZCI6ImJmZWM0NWU0LWRiYzAtNDMzNi1iY2U1LTM1ZjVjODQ5Nzg0YiIsInJvbGUiOiIifQ.UHJNxiTqZCHD3p7AuKQsgamZi4_MLTvAR03xcci7g0w";
-    $.ajax({
-        // url: proxy_cors + "https://opendata.aemet.es/opendata/api/valores/climatologicos/inventarioestaciones/todasestaciones/?api_key=" + api_key_aemet,
-        // url: proxy_cors + "https://opendata.aemet.es/opendata/api/prediccion/provincia/hoy/03?api_key=" + api_key_aemet,
-        // /api/prediccion/provincia/hoy/{provincia}
-        // /api/prediccion/provincia/manana/{provincia}
-        url: proxy_cors + "https://opendata.aemet.es/opendata/api/observacion/convencional/todas?api_key=" + api_key_aemet,
-        type: "get",
-        async: true,
-        crossDomain: true,
-        headers: {
-            "cache-control": "no-cache"
-        },
-        success: function (data) {
-            // console.log("ini timepo2");
-            // console.log(data);
-            // console.log("fin timepo2");
 
-            $.ajax({
-                url: data.datos,
-                type: "get",
-                async: true,
-                crossDomain: true,
-                headers: {
-                    "cache-control": "no-cache"
-                },
-                dataType: "json",
-                success: function (data_consulta) {
-                    console.log("ini timepo3");
-                    console.log(data_consulta);
-                    // console.log(data[0].nombre);
-                    // console.log(data[0].latitud);
-                    // console.log(data[0].longitud);
-                    // console.log(gradosADecimal(41, 35, 15, "N"));
-                    // console.log(gradosADecimal(02, 32, 24, "E"));
-                    console.log("fin timepo3");
+    var promesas = [];
 
-
-                },
-                error: function (errorMessage) {
-                    console.log("error_tiempo");
-                    console.log(errorMessage);
-                }
-            });
-
-        },
-        error: function (errorMessage) {
-            console.log("error_tiempo");
-            console.log(errorMessage);
-        }
+    tiempo_data['features'].forEach(function (ciud) {
+        var peticion = $.ajax({
+            url: proxy_cors + "https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/horaria/" + ciud['properties']['id'] + "?api_key=" + api_key_aemet,
+            type: "get",
+            async: true,
+            crossDomain: true,
+            headers: {
+                "cache-control": "no-cache"
+            },
+            success: function (data) {
+                var peticion_interna = $.ajax({
+                    url: data.datos,
+                    type: "get",
+                    async: true,
+                    crossDomain: true,
+                    headers: {
+                        "cache-control": "no-cache"
+                    },
+                    dataType: "json",
+                    success: function (data_consulta) {
+                        var hora_ahora = new Date().getHours();
+                        var peticion_interna_2 = data_consulta[0].prediccion.dia[0].estadoCielo.forEach(function (hora_dia) {
+                            if (hora_dia.periodo == hora_ahora.toString()) {
+                                ciud['properties']['direccion'] = hora_ahora + "h: " + hora_dia.descripcion;
+                            }
+                        });
+                        promesas.push(peticion_interna_2);
+                    },
+                    error: function (errorMessage) {
+                        console.log("error_tiempo4");
+                        console.log(errorMessage);
+                    }
+                });
+                promesas.push(peticion_interna);
+            },
+            error: function (errorMessage) {
+                console.log("error_el_tiempo4");
+                console.log(errorMessage);
+            }
+        });
+        promesas.push(peticion);
     });
 
+    Promise.all(promesas)
+        .then(responseList => {
+            setTimeout(
+                function () {
+                    console.log("en el fin de promesas222");
+                    pintarPuntosMapa(tiempo_data, "info_tiempo");
+                }, 2000);
+        })
 }
 
 function gradosADecimal(grados, minutos, segundos, direccion) {
@@ -1079,4 +1023,25 @@ function gradosADecimal(grados, minutos, segundos, direccion) {
         decimal = decimal * -1;
     }
     return decimal;
+}
+
+function pushCiudadTiempo(array, id, nombre, latitud, longitud) {
+
+    var item_data_tiempo = {};
+    var item_data_tiempo_properties = {};
+    item_data_tiempo_properties['icon'] = tipo_punto.cuadrado;
+    var item_data_tiempo_geometry = {};
+    item_data_tiempo_properties['direccion'] = "";
+    item_data_tiempo_properties['nombre'] = nombre;
+    item_data_tiempo_properties['id'] = id;
+    item_data_tiempo_properties['info_adicional'] = "";
+
+    item_data_tiempo_geometry['type'] = 'Point';
+    item_data_tiempo_geometry['coordinates'] = [longitud, latitud];
+
+    item_data_tiempo['properties'] = item_data_tiempo_properties;
+    item_data_tiempo['geometry'] = item_data_tiempo_geometry;
+    array['features'].push(item_data_tiempo);
+
+    return array;
 }
