@@ -1137,24 +1137,28 @@ function pushCiudadTiempo(array, id, nombre, latitud, longitud) {
 }
 
 function clasificarEstadoCielo(codigo_estado) {
+
     switch (codigo_estado) {
-        case "11":
-        case "11n":
+        case "11": case "11n":
             return tipo_punto.sol;
-        case "12":
-        case "12n":
+        case "12": case "13": case "16": case "17":
             return tipo_punto.parcialmente_nublado_dia;
-        case "14":
-        case "14n":
-        case "15":
-        case "15n":
-        case "16":
-        case "16n":
+        case "12n": case "13n": case "16n": case "17n":
+            return tipo_punto.parcialmente_nublado_noche;
+        case "14": case "14n": case "15": case "15n":
             return tipo_punto.nubes;
-        case "43":
-        case "46":
-        case "46n":
+        case "23": case "23n": case "24": case "24n": case "25": case "26":
+            return tipo_punto.lluvia;
+        case "43": case "43n":
             return tipo_punto.parcialmente_nublado_lluvia;
+        case "44": case "44n": case "45": case "45n": case "46": case "46n":
+            return tipo_punto.lluvia_ligera;
+        case "51": case "51n": case "52": case "52n": case "53": case "54": case "61": case "61n": case "62": case "62n": case "63": case "64":
+            return tipo_punto.nubes_relampago;
+        case "71": case "71n": case "72": case "72n": case "73": case "74": case "33": case "33n": case "34": case "34n": case "35": case "36":
+            return tipo_punto.nieve;
+        case "81": case "82":
+            return tipo_punto.niebla_dia;
         default:
             console.log(codigo_estado);
     }
