@@ -1101,7 +1101,71 @@ function cargaTiempo() {
                 function () {
                     pintarPuntosMapa(tiempo_data, "info_tiempo");
                 }, 2000);
-        })
+        });
+
+    $.ajax({
+        url: proxy_cors + "https://opendata.aemet.es/opendata/api/prediccion/provincia/hoy/03?api_key=" + api_key_aemet,
+        type: "get",
+        async: true,
+        crossDomain: true,
+        headers: {
+            "cache-control": "no-cache"
+        },
+        success: function (data) {
+            $.ajax({
+                url: data.datos,
+                type: "get",
+                async: true,
+                crossDomain: true,
+                headers: {
+                    "cache-control": "no-cache"
+                },
+                // dataType: "json",
+                success: function (data_consulta) {
+                    var data_array = data_consulta.split("ALACANT/ALICANTE");
+                    var texto = "Información del tiempo:\n" + data_array[data_array.length - 1].split("TEMPERATURAS")[0];
+                    var temperaturas = "TEMPERATURAS" + data_array[data_array.length - 1].split("TEMPERATURAS")[1];
+
+                    var lineas_temperatura = temperaturas.split("\n");
+                    // console.log(lineas_temperatura);
+                    var tabla_temperaturas = $('<table>').addClass('foo');
+                    var fila = $('<tr>' +
+                        '<th>' + 'Ciudad' + '</th>' +
+                        '<th>' + 'Mínima' + '</th>' +
+                        '<th>' + 'Máxima' + '</th>' +
+                        '</tr>'
+                    );
+                    tabla_temperaturas.append(fila);
+                    for (i = 1; i < lineas_temperatura.length; i++) {
+                        var linea_filtrada = lineas_temperatura[i].split(" ");
+                        linea_filtrada = linea_filtrada.filter(function (v) { return v !== '' }); // para quitar lo elementos que son vacíos, porque al hacer el split, todos los espacios los añade como elemento vacío
+                        if (linea_filtrada[0] !== undefined && linea_filtrada[0].trim()) {
+                            fila = $('<tr>' +
+                                '<td>' + linea_filtrada[0] + '</td>' +
+                                '<td>' + linea_filtrada[1] + '</td>' +
+                                '<td>' + linea_filtrada[2] + '</td>' +
+                                '</tr>'
+                            );
+                            tabla_temperaturas.append(fila);
+                        }
+                    }
+
+                    $(".et_pb_row_1").append('<hr>');
+                    $(".et_pb_row_1").append($('<div>').attr("id", "info_temperatura").append(lineas_temperatura[0]));
+                    $(".et_pb_row_1").append($('<div>').attr("id", "info_temperatura").append(tabla_temperaturas));
+                    $(".et_pb_row_1").append('<hr>');
+                },
+                error: function (errorMessage) {
+                    console.log("error_tiempo_escrito2");
+                    console.log(errorMessage);
+                }
+            });
+        },
+        error: function (errorMessage) {
+            console.log("error_el_tiempo_escrito");
+            console.log(errorMessage);
+        }
+    });
 }
 
 function gradosADecimal(grados, minutos, segundos, direccion) {
