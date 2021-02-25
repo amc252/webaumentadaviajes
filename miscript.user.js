@@ -140,7 +140,7 @@ $(document).ready(function () {
 
             setTimeout(
                 function () {
-                    cargaTiempo();
+                    // cargaTiempo();
                 }, 1000);
         }
     }
@@ -741,7 +741,8 @@ function cargarDataRenfeEstaciones() {
     $('#datos_renfe_estaciones').append($('<p>').text("hola"));
 
     var data = {
-        resource_id: '783e0626-6fa8-4ac7-a880-fa53144654ff', // the resource id
+        // resource_id: '783e0626-6fa8-4ac7-a880-fa53144654ff', // estaciones renfe en alicante
+        resource_id: '5b7b1ca8-f14e-481a-8775-bc2afba666f1', //cercanias renfe
         // limit: 5, // get 5 results
         q: 'alicante/alacant' // query for 'alicante/alacant'
     };
