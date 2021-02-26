@@ -235,6 +235,7 @@ function cargaContacto() {
                 function () {
                     // cargarFourSquare();
                     // cargarYelp();
+                    cargarHere();
                 }, 1000);
         },
         error: function (errorMessage) {
@@ -948,6 +949,32 @@ function cargarYelp() {
         },
         error: function (errorMessage) {
             console.log("error_data_yelp");
+            console.log(errorMessage);
+        }
+    });
+}
+
+function cargarHere() {
+
+    // coordenadas Alcoi
+    var latitud = 38.7054500;
+    var longitud = -0.4743200;
+    var api_key = "3BMlnB66GYJQQWsXMr5WzcniU81_d_ENmTrOocHDUc0";
+
+    var palabra_buscar = "mueso";
+
+    $.ajax({
+        url: 'https://discover.search.hereapi.com/v1/discover?at=' + latitud + ',' + longitud + '&q=' + palabra_buscar + '&apiKey=' + api_key,
+        type: "get",
+        dataType: 'json',
+        success: function (data) {
+            console.log("ini data Here");
+            console.log(data);
+            console.log("fin data Here");
+
+        },
+        error: function (errorMessage) {
+            console.log("error_data_Here");
             console.log(errorMessage);
         }
     });
