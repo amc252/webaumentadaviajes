@@ -964,7 +964,7 @@ function cargarHere() {
     var palabra_buscar = "mueso";
 
     $.ajax({
-        url: 'https://discover.search.hereapi.com/v1/discover?at=' + latitud + ',' + longitud + '&q=' + palabra_buscar + '&apiKey=' + api_key,
+        url: 'https://discover.search.hereapi.com/v1/discover?in=circle:' + latitud + ',' + longitud + ';r=1000' + '&limit=100' + '&q=' + palabra_buscar + '&apiKey=' + api_key,
         type: "get",
         dataType: 'json',
         success: function (data) {
@@ -972,6 +972,30 @@ function cargarHere() {
             console.log(data);
             console.log("fin data Here");
 
+            var here_data = {};
+            here_data['categoria'] = "here_data";
+            here_data['type'] = 'FeatureCollection';
+            here_data['features'] = [];
+            for (i = 0; i < data.items.length; i++) {
+                var item_data_here = {};
+                var item_data_here_properties = {};
+                // item_data_here_properties['icon'] = clasificarCategoria((data.items[i].categories[0].alias).toLowerCase());
+                item_data_here_properties['icon'] = tipo_punto.triangulo;
+                var item_data_here_geometry = {};
+                item_data_here_properties['direccion'] = data.items[i].address.street + " " + data.items[i].address.houseNumber + " " + data.items[i].address.city;
+                item_data_here_properties['nombre'] = data.items[i].title;
+                item_data_here_properties['info_adicional'] = data.items[i].categories[0].name;
+
+                item_data_here_geometry['type'] = 'Point';
+                item_data_here_geometry['coordinates'] = [data.items[i].position.lng, data.items[i].position.lat];
+
+                item_data_here['properties'] = item_data_here_properties;
+                item_data_here['geometry'] = item_data_here_geometry;
+                here_data['features'].push(item_data_here);
+            }
+
+            // console.log(here_data);
+            pintarPuntosMapa(here_data, 'here_data');
         },
         error: function (errorMessage) {
             console.log("error_data_Here");
