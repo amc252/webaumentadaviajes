@@ -136,11 +136,12 @@ $(document).ready(function () {
     else {
         // alert("si existe la pagina");
         if (pathname == "/contacto/") {
-            cargaContacto();
+            // cargaContacto();
+            cargarProvinciaRuta();
 
             setTimeout(
                 function () {
-                    // cargaTiempo();
+                    // cargarTiempo();
                 }, 1000);
         }
     }
@@ -233,8 +234,8 @@ function cargaContacto() {
             // a veces carga muy rapido y se adelanta al mapa y por eso da error
             setTimeout(
                 function () {
-                    // cargarFourSquare();
-                    // cargarYelp();
+                    cargarFourSquare();
+                    cargarYelp();
                     cargarHere();
                 }, 1000);
         },
@@ -243,6 +244,42 @@ function cargaContacto() {
             console.log(errorMessage);
         }
     });
+}
+
+function cargarProvinciaRuta() {
+
+    //esto es porque desaparecen unas imagenes sin motivo
+    $(".jetpack-lazy-image").removeAttr("data-lazy-src");
+    $(".jetpack-lazy-image").removeAttr("srcset");
+
+    $("#mapa-contacto").remove();
+
+    $(".et_pb_row_2").empty();
+    $(".et_pb_row_3").empty();
+    $(".et_pb_row_1").empty();
+    $("div.et_builder_inner_content, div.et_pb_gutters3")
+        .prepend($(
+            '<div class="et_pb_section et_pb_section_0 et_pb_with_background et_pb_fullwidth_section et_section_regular">' +
+            '<section id="cabecera-fondo-imagen" class="et_pb_module et_pb_fullwidth_header et_pb_fullwidth_header_0 et_pb_bg_layout_dark et_pb_text_align_left">' +
+            '<div class="et_pb_fullwidth_header_container left">' +
+            '<div class="header-content-container center">' +
+            '<div class="header-content">' +
+            '<div class="et_pb_header_content_wrapper">' +
+            '<h1 class="cabecera-home" style="text-align: center;">' +
+            '<img class="icono-cabecera aligncenter" src="/wp-content/uploads/2018/06/MAS-INFORMACION-PRACTICAb.png"> Planifica tu ruta por la provincia de Alicante</h1>' +
+            '<div style="clear: both; text-align: center;">&nbsp;</div>' +
+            '<h4 style="text-align: center;">Indica la pronvicia y usa el buscador para trazar una ruta con la información sobre alojamientos, restaurantes, parques...</h4></div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="et_pb_fullwidth_header_overlay"></div>' +
+            '<div class="et_pb_fullwidth_header_scroll"></div>'));
+
+    $(".et_pb_row_1")
+        .append($('<a>').attr('href', "https://es.wikipedia.org/wiki/Alicante").append(
+            $('<span>').append("Enlace Wikipedia1")
+        ));
+
 }
 
 function crearCheckBoxMapa() {
@@ -673,6 +710,65 @@ function pintarPuntosMapa(conjunto_puntos, id_conjunto_puntos) {
     });
 }
 
+function pintarInfoSitio(conjunto_sitios, id_div_texto) {
+    console.log(conjunto_sitios);
+
+    var tabla_sitios = $('<table>').addClass('foo');
+    var fila = $('<tr>' +
+        '<th>' + 'Nombre' + '</th>' +
+        '<th>' + 'Dirección' + '</th>' +
+        '<th>' + 'Info adicional' + '</th>' +
+        '<th>' + 'Coordenadas' + '</th>' +
+        '<th>' + 'Categoria' + '</th>' +
+        '<th>' + 'Telefono' + '</th>' +
+        '<th>' + 'Web' + '</th>' +
+        '<th>' + 'Email' + '</th>' +
+        '<th>' + 'Horario' + '</th>' +
+        '</tr>'
+    );
+    tabla_sitios.append(fila);
+
+    conjunto_sitios.features.forEach(function (sitio) {
+        // $('#' + id_div_texto).append($('<p>').text("Nombre: " + sitio.properties.nombre));
+        // $('#' + id_div_texto).append($('<p>').text("Dirección: " + sitio.properties.direccion));
+        // $('#' + id_div_texto).append($('<p>').text("Info adicional: " + sitio.properties.info_adicional));
+        // $('#' + id_div_texto).append($('<p>').text("Coordenadas: " + sitio.geometry.coordinates[0] + ", " + sitio.geometry.coordinates[0]));
+        var telefonos = "";
+        var webs = "";
+        var correos = "";
+        if (typeof sitio.properties.telefono !== "undefined") {
+            sitio.properties.telefono.forEach(function (tlf) {
+                telefonos += '<br>' + tlf;
+            });
+        }
+        if (typeof sitio.properties.web !== "undefined") {
+            sitio.properties.web.forEach(function (web) {
+                webs += '<br>' + web;
+            });
+        }
+        if (typeof sitio.properties.email !== "undefined") {
+            sitio.properties.email.forEach(function (email) {
+                correos += '<br>' + email;
+            });
+        }
+
+        fila = $('<tr>' +
+            '<td>' + sitio.properties.nombre + '</td>' +
+            '<td>' + sitio.properties.direccion + '</td>' +
+            '<td>' + sitio.properties.info_adicional + '</td>' +
+            '<td>' + sitio.geometry.coordinates[0] + ", " + sitio.geometry.coordinates[1] + '</td>' +
+            '<td>' + sitio.properties.categoria + '</td>' +
+            '<td>' + telefonos + '</td>' +
+            '<td>' + webs + '</td>' +
+            '<td>' + correos + '</td>' +
+            '<td>' + sitio.properties.horario + '</td>' +
+            '</tr>'
+        );
+        tabla_sitios.append(fila);
+    })
+    $('#' + id_div_texto).append(tabla_sitios);
+}
+
 function borrarPuntosMapa(id_conjunto_puntos) {
     map.removeLayer(id_conjunto_puntos);
     map.removeSource(id_conjunto_puntos);
@@ -961,7 +1057,8 @@ function cargarHere() {
     var longitud = -0.4743200;
     var api_key = "3BMlnB66GYJQQWsXMr5WzcniU81_d_ENmTrOocHDUc0";
 
-    var palabra_buscar = "mueso";
+    // var palabra_buscar = "mueso";
+    var palabra_buscar = "restaurante";
 
     $.ajax({
         url: 'https://discover.search.hereapi.com/v1/discover?in=circle:' + latitud + ',' + longitud + ';r=1000' + '&limit=100' + '&q=' + palabra_buscar + '&apiKey=' + api_key,
@@ -977,25 +1074,68 @@ function cargarHere() {
             here_data['type'] = 'FeatureCollection';
             here_data['features'] = [];
             for (i = 0; i < data.items.length; i++) {
-                var item_data_here = {};
-                var item_data_here_properties = {};
-                // item_data_here_properties['icon'] = clasificarCategoria((data.items[i].categories[0].alias).toLowerCase());
-                item_data_here_properties['icon'] = tipo_punto.triangulo;
-                var item_data_here_geometry = {};
-                item_data_here_properties['direccion'] = data.items[i].address.street + " " + data.items[i].address.houseNumber + " " + data.items[i].address.city;
-                item_data_here_properties['nombre'] = data.items[i].title;
-                item_data_here_properties['info_adicional'] = data.items[i].categories[0].name;
+                // if (i === 0 || (data.items[i].position.lng !== data.items[i - 1].position.lng && data.items[i].position.lat !== data.items[i - 1].position.lat)) 
+                {
+                    var item_data_here = {};
+                    var item_data_here_properties = {};
+                    // item_data_here_properties['icon'] = clasificarCategoria((data.items[i].categories[0].alias).toLowerCase());
+                    item_data_here_properties['icon'] = tipo_punto.triangulo;
+                    var item_data_here_geometry = {};
+                    item_data_here_properties['nombre'] = data.items[i].title;
+                    item_data_here_properties['direccion'] = data.items[i].address.street + " " + data.items[i].address.houseNumber + " " + data.items[i].address.city;
+                    item_data_here_properties['info_adicional'] = data.items[i].categories[0].name;
+                    item_data_here_properties['categoria'] = data.items[i].categories[0].name;
+                    if (typeof data.items[i].contacts !== "undefined") {
+                        if (typeof data.items[i].contacts[0].phone !== "undefined") {
+                            var aux_array = [];
+                            data.items[i].contacts[0].phone.forEach(function (tlf, indice) {
+                                aux_array.push(tlf.value);
+                            });
+                            item_data_here_properties['telefono'] = aux_array;
+                        }
+                        if (typeof data.items[i].contacts[0].www !== "undefined") {
+                            var aux_array = [];
+                            data.items[i].contacts[0].www.forEach(function (web, indice) {
+                                // item_data_here_properties['web' + indice] = web.value;
+                                aux_array.push(web.value);
+                            });
+                            item_data_here_properties['web'] = aux_array;
+                        }
+                        if (typeof data.items[i].contacts[0].email !== "undefined") {
+                            var aux_array = [];
+                            data.items[i].contacts[0].email.forEach(function (email, indice) {
+                                // item_data_here_properties['email' + indice] = email.value;
+                                aux_array.push(email.value);
+                            });
+                            item_data_here_properties['email'] = aux_array;
+                        }
+                    }
+                    if (typeof data.items[i].openingHours !== "undefined") {
+                        var aux_horario = "";
+                        data.items[i].openingHours[0].text.forEach(function (horario) {
+                            aux_horario += " " + horario;
+                        });
+                        item_data_here_properties['horario'] = aux_horario;
+                    }
+                    else {
+                        item_data_here_properties['horario'] = "";
+                    }
+                    // item_data_here_properties['web'] = data.items[i].contacts[0].www[0].value;
+                    // item_data_here_properties['email'] = data.items[i].contacts[0].email[0].value;
+                    // item_data_here_properties['horario'] = data.items[i].openingHours[0].text[0].text;
 
-                item_data_here_geometry['type'] = 'Point';
-                item_data_here_geometry['coordinates'] = [data.items[i].position.lng, data.items[i].position.lat];
+                    item_data_here_geometry['type'] = 'Point';
+                    item_data_here_geometry['coordinates'] = [data.items[i].position.lng, data.items[i].position.lat];
 
-                item_data_here['properties'] = item_data_here_properties;
-                item_data_here['geometry'] = item_data_here_geometry;
-                here_data['features'].push(item_data_here);
+                    item_data_here['properties'] = item_data_here_properties;
+                    item_data_here['geometry'] = item_data_here_geometry;
+                    here_data['features'].push(item_data_here);
+                }
             }
 
             // console.log(here_data);
             pintarPuntosMapa(here_data, 'here_data');
+            pintarInfoSitio(here_data, "datos_renfe_estaciones")
         },
         error: function (errorMessage) {
             console.log("error_data_Here");
@@ -1004,7 +1144,7 @@ function cargarHere() {
     });
 }
 
-function cargaTiempo() {
+function cargarTiempo() {
     //esto es porque desaparecen unas imagenes sin motivo
     // $(".jetpack-lazy-image").removeAttr("data-lazy-src");
     // $(".jetpack-lazy-image").removeAttr("srcset");
