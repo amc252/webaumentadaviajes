@@ -56,6 +56,23 @@ var tipo_punto = {
     viento: 'wind',
 };
 
+var array_ciudades = [
+    { id: "00000", nombre: "Provincia", longitud: "-0.5000000", latitud: "38.3550000", zoom: "8" },
+    { id: "03063", nombre: "Denia", longitud: "0.1057400", latitud: "38.8407800", zoom: "13" },
+    { id: "03100", nombre: "Parcent", longitud: "-0.0644600", latitud: "38.7450200", zoom: "13" },
+    { id: "03009", nombre: "Alcoy", longitud: "-0.4743200", latitud: "38.7054500", zoom: "13" },
+    { id: "03140", nombre: "Villena", longitud: "-0.8656800", latitud: "38.6373000", zoom: "13" },
+    { id: "03083", nombre: "Jijona", longitud: "-0.5026300", latitud: "38.5408600", zoom: "13" },
+    { id: "03031", nombre: "Benidorm", longitud: "-0.1309800", latitud: "38.5381600", zoom: "13" },
+    { id: "03066", nombre: "Elda", longitud: "-0.7915700", latitud: "38.4778300", zoom: "13" },
+    { id: "03105", nombre: "Pinoso", longitud: "-1.0419600", latitud: "38.4016400", zoom: "13" },
+    { id: "03014", nombre: "Alicante", longitud: "-0.4814900", latitud: "38.3451700", zoom: "13" },
+    { id: "03065", nombre: "Elche", longitud: "-0.7010700", latitud: "38.2621800", zoom: "13" },
+    { id: "03121", nombre: "SantaPola", longitud: "-0.5658000", latitud: "38.1916500", zoom: "13" },
+    { id: "03099", nombre: "Orihuela", longitud: "-0.9440100", latitud: "38.0848300", zoom: "13" },
+    { id: "03133", nombre: "Torrevieja", longitud: "-0.6822200", latitud: "37.9787200", zoom: "13" },
+]
+
 var map;
 
 // var proxy_cors = "https://cors-anywhere.herokuapp.com/";
@@ -225,7 +242,7 @@ function cargaContacto() {
             $(".et_pb_row_1").append($('<div>').attr("id", "datos_alcoi_museos"));
             $("#datos_alcoi_museos").append($('<div>').attr("id", "mapa").attr("style", 'height: 500px;background-color:#08c;width: 1000px;'));
             crearCheckBoxMapa();
-            cargarMapa("mapa");
+            cargarMapa("mapa", "-0.4843200", "38.8054500", "13");
 
             $(".et_pb_row_1").append('<hr>');
             $(".et_pb_row_1").append($('<div>').attr("id", "datos_renfe_estaciones"));
@@ -260,25 +277,79 @@ function cargarProvinciaRuta() {
     $("div.et_builder_inner_content, div.et_pb_gutters3")
         .prepend($(
             '<div class="et_pb_section et_pb_section_0 et_pb_with_background et_pb_fullwidth_section et_section_regular">' +
-            '<section id="cabecera-fondo-imagen" class="et_pb_module et_pb_fullwidth_header et_pb_fullwidth_header_0 et_pb_bg_layout_dark et_pb_text_align_left">' +
+            '<section id="cabecera-fondo-imagen" class="et_pb_module et_pb_fullwidth_header et_pb_fullwidth_header_0 et_pb_bg_layout_dark et_pb_text_align_left" style="background-position: bottom; background-image: url(https://www.alicanteturismo.com/wp-content/uploads/2020/09/oficina-de-turismo-Alicante-Puerto-MARINA-DEPORTIVA-2-scaled.jpg);">' + //pone forma y todo al gris
             '<div class="et_pb_fullwidth_header_container left">' +
             '<div class="header-content-container center">' +
             '<div class="header-content">' +
             '<div class="et_pb_header_content_wrapper">' +
             '<h1 class="cabecera-home" style="text-align: center;">' +
-            '<img class="icono-cabecera aligncenter" src="/wp-content/uploads/2018/06/MAS-INFORMACION-PRACTICAb.png"> Planifica tu ruta por la provincia de Alicante</h1>' +
+            '<img class="icono-cabecera aligncenter" src="/wp-content/uploads/2018/06/COMO-LLEGARb.png"> Planifica tu ruta por la provincia de Alicante' +
+            '</h1>' +
             '<div style="clear: both; text-align: center;">&nbsp;</div>' +
-            '<h4 style="text-align: center;">Indica la pronvicia y usa el buscador para trazar una ruta con la información sobre alojamientos, restaurantes, parques...</h4></div>' +
+            '<h4 style="text-align: center;">Indica la pronvicia y usa el buscador para trazar una ruta con la información sobre alojamientos, restaurantes, parques...</h4>' +
+            '</div>' +
             '</div>' +
             '</div>' +
             '</div>' +
             '<div class="et_pb_fullwidth_header_overlay"></div>' +
-            '<div class="et_pb_fullwidth_header_scroll"></div>'));
-
-    $(".et_pb_row_1")
-        .append($('<a>').attr('href', "https://es.wikipedia.org/wiki/Alicante").append(
-            $('<span>').append("Enlace Wikipedia1")
+            '<div class="et_pb_fullwidth_header_scroll"></div>' +
+            '</section>' +
+            '</div>'
         ));
+
+    $(".et_pb_row_1").append($('<div>').attr("id", "planificar_ruta"));
+    $("#planificar_ruta").append($('<div>').attr("id", "mapa_ruta").attr("style", 'height: 500px;background-color:#08c;width: 1000px;'));
+    cargarMapa("mapa_ruta", "-0.5000000", "38.3550000", "8");
+    setTimeout(
+        function () {
+            // cambiarPosicionMapa("-0.5000000", "38.3550000", "8");
+        }, 2000);
+    $("#planificar_ruta").append($('<div>').attr("id", "opciones_ruta").attr('style', 'padding-top: 25px;'));
+    $("#opciones_ruta").append($('<div>').attr("id", "filtros").attr('class', 'et_pb_column et_pb_column_1_4 et_pb_column_0'));
+    $("#opciones_ruta").append($('<div>').attr("id", "resultados").attr('class', 'et_pb_column et_pb_column_3_4 et_pb_column_1'));
+    $("#filtros").append($('<select>').attr('id', 'combob_ciudad'));
+    for (i = 0; i < array_ciudades.length; i++) {
+        $("#combob_ciudad").append($('<option>').attr('value', array_ciudades[i].id).text(array_ciudades[i].nombre));
+    }
+    $('#combob_ciudad').change(function () {
+        var valueSelected = this.value;
+        console.log(valueSelected);
+        for (i = 0; i < array_ciudades.length; i++) {
+            if (this.value === array_ciudades[i].id) {
+                cambiarPosicionMapa(array_ciudades[i].longitud, array_ciudades[i].latitud, array_ciudades[i].zoom);
+            }
+        }
+    });
+    $("#filtros").append($('<input>').attr('id', 'in_buscar').attr('type', 'text').attr('placeholder', 'Ej: Restaurante Chino'));
+    $("#filtros").append($('<button>').attr('id', 'btn_buscar').attr('type', 'button').text('Buscar').attr('class', 'et_pb_button'));
+    $('#btn_buscar').click(function () {
+        var palabra = $("#in_buscar").val();
+        console.log("palabra: " + palabra);
+        if (palabra !== "") {
+            for (i = 0; i < array_ciudades.length; i++) {
+                if ($("#combob_ciudad option:selected").val() === "00000") {
+                    alert("Debe elegir una ciudad de la provincia");
+                    break;
+                }
+                else if ($("#combob_ciudad option:selected").val() === array_ciudades[i].id) {
+                    // cambiarPosicionMapa(array_ciudades[i].longitud, array_ciudades[i].latitud, array_ciudades[i].zoom);
+                    consultaHere(palabra, array_ciudades[i].longitud, array_ciudades[i].latitud);
+                }
+            }
+        }
+        else{
+            alert("Debe indicar algo en el buscador");
+        }
+    });
+    $("#resultados")
+        .prepend($(
+            '<div class="et_pb_module et_pb_text et_pb_text_4 texto-azul et_pb_bg_layout_light  et_pb_text_align_left">' +
+            '<div class="et_pb_text_inner">' +
+            '<h2 class="cabecera-destacados texto-azul"><strong>Resultados</strong></h2>' +
+            '<p><img class="senefa-agenda" src="/wp-content/uploads/2018/05/fondo-destacados-home.png"></p>' +
+            '<div style="clear: both;"></div>' +
+            '</div>' +
+            '</div>'));
 
 }
 
@@ -487,7 +558,7 @@ function crearCheckBoxMapa() {
     });
 }
 
-function cargarMapa(id_div_mapa) {
+function cargarMapa(id_div_mapa, longitud_inicial, latitud_inicial, zoom_inicial) {
     //cargar mapa y sus cosas
     API_js_callback = "https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js";
     API_js_callback_css = "https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css";
@@ -519,8 +590,8 @@ function cargarMapa(id_div_mapa) {
             container: id_div_mapa, // container id
             style: 'mapbox://styles/mapbox/streets-v10', // style URL
             // style: 'mapbox://styles/amc252/ckk5m88ne18qr18nx52qly643', //estilo propio sin labels
-            center: [-0.4743200, 38.7054500], // starting position [lng, lat]
-            zoom: 13 // starting zoom
+            center: [longitud_inicial, latitud_inicial], // starting position [lng, lat]
+            zoom: zoom_inicial // starting zoom
         });
 
         $(".mapboxgl-control-container").remove();
@@ -772,6 +843,10 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
 function borrarPuntosMapa(id_conjunto_puntos) {
     map.removeLayer(id_conjunto_puntos);
     map.removeSource(id_conjunto_puntos);
+}
+
+function cambiarPosicionMapa(nueva_longitud, nueva_latitud, nuevo_zoom) {
+    map.flyTo({ center: [nueva_longitud, nueva_latitud], zoom: nuevo_zoom });
 }
 
 function cargarOpenDataAlcoi(url_open_data_alcoi, id_conjunto_datos, icono_conjunto) {
@@ -1136,6 +1211,93 @@ function cargarHere() {
             // console.log(here_data);
             pintarPuntosMapa(here_data, 'here_data');
             pintarInfoSitio(here_data, "datos_renfe_estaciones")
+        },
+        error: function (errorMessage) {
+            console.log("error_data_Here");
+            console.log(errorMessage);
+        }
+    });
+}
+
+function consultaHere(palabra, longitud, latitud) {
+    var api_key = "3BMlnB66GYJQQWsXMr5WzcniU81_d_ENmTrOocHDUc0";
+
+    $.ajax({
+        url: 'https://discover.search.hereapi.com/v1/discover?in=circle:' + latitud + ',' + longitud + ';r=1000' + '&limit=100' + '&q=' + palabra + '&apiKey=' + api_key,
+        type: "get",
+        dataType: 'json',
+        success: function (data) {
+            console.log("ini data Here");
+            console.log(data);
+            console.log("fin data Here");
+
+            var here_data = {};
+            here_data['categoria'] = "here_data";
+            here_data['type'] = 'FeatureCollection';
+            here_data['features'] = [];
+            for (i = 0; i < data.items.length; i++) {
+                // if (i === 0 || (data.items[i].position.lng !== data.items[i - 1].position.lng && data.items[i].position.lat !== data.items[i - 1].position.lat)) 
+                {
+                    var item_data_here = {};
+                    var item_data_here_properties = {};
+                    // item_data_here_properties['icon'] = clasificarCategoria((data.items[i].categories[0].alias).toLowerCase());
+                    item_data_here_properties['icon'] = tipo_punto.triangulo;
+                    var item_data_here_geometry = {};
+                    item_data_here_properties['nombre'] = data.items[i].title;
+                    item_data_here_properties['direccion'] = data.items[i].address.street + " " + data.items[i].address.houseNumber + " " + data.items[i].address.city;
+                    item_data_here_properties['info_adicional'] = data.items[i].categories[0].name;
+                    item_data_here_properties['categoria'] = data.items[i].categories[0].name;
+                    if (typeof data.items[i].contacts !== "undefined") {
+                        if (typeof data.items[i].contacts[0].phone !== "undefined") {
+                            var aux_array = [];
+                            data.items[i].contacts[0].phone.forEach(function (tlf, indice) {
+                                aux_array.push(tlf.value);
+                            });
+                            item_data_here_properties['telefono'] = aux_array;
+                        }
+                        if (typeof data.items[i].contacts[0].www !== "undefined") {
+                            var aux_array = [];
+                            data.items[i].contacts[0].www.forEach(function (web, indice) {
+                                // item_data_here_properties['web' + indice] = web.value;
+                                aux_array.push(web.value);
+                            });
+                            item_data_here_properties['web'] = aux_array;
+                        }
+                        if (typeof data.items[i].contacts[0].email !== "undefined") {
+                            var aux_array = [];
+                            data.items[i].contacts[0].email.forEach(function (email, indice) {
+                                // item_data_here_properties['email' + indice] = email.value;
+                                aux_array.push(email.value);
+                            });
+                            item_data_here_properties['email'] = aux_array;
+                        }
+                    }
+                    if (typeof data.items[i].openingHours !== "undefined") {
+                        var aux_horario = "";
+                        data.items[i].openingHours[0].text.forEach(function (horario) {
+                            aux_horario += " " + horario;
+                        });
+                        item_data_here_properties['horario'] = aux_horario;
+                    }
+                    else {
+                        item_data_here_properties['horario'] = "";
+                    }
+                    // item_data_here_properties['web'] = data.items[i].contacts[0].www[0].value;
+                    // item_data_here_properties['email'] = data.items[i].contacts[0].email[0].value;
+                    // item_data_here_properties['horario'] = data.items[i].openingHours[0].text[0].text;
+
+                    item_data_here_geometry['type'] = 'Point';
+                    item_data_here_geometry['coordinates'] = [data.items[i].position.lng, data.items[i].position.lat];
+
+                    item_data_here['properties'] = item_data_here_properties;
+                    item_data_here['geometry'] = item_data_here_geometry;
+                    here_data['features'].push(item_data_here);
+                }
+            }
+
+            // console.log(here_data);
+            pintarPuntosMapa(here_data, 'here_data');
+            // pintarInfoSitio(here_data, "datos_renfe_estaciones")
         },
         error: function (errorMessage) {
             console.log("error_data_Here");
