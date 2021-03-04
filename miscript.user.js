@@ -75,6 +75,10 @@ var array_ciudades = [
 
 var map;
 
+var array_capas_mapa = [];
+
+var array_sitios_guardados = [];
+
 // var proxy_cors = "https://cors-anywhere.herokuapp.com/";
 var proxy_cors = "https://afternoon-oasis-49174.herokuapp.com/";
 
@@ -307,13 +311,12 @@ function cargarProvinciaRuta() {
     $("#planificar_ruta").append($('<div>').attr("id", "opciones_ruta").attr('style', 'padding-top: 25px;'));
     $("#opciones_ruta").append($('<div>').attr("id", "filtros").attr('class', 'et_pb_column et_pb_column_1_4 et_pb_column_0'));
     $("#opciones_ruta").append($('<div>').attr("id", "resultados").attr('class', 'et_pb_column et_pb_column_3_4 et_pb_column_1'));
-    $("#filtros").append($('<select>').attr('id', 'combob_ciudad'));
+    $("#filtros").append($('<select>').attr('id', 'sb_ciudad'));
     for (i = 0; i < array_ciudades.length; i++) {
-        $("#combob_ciudad").append($('<option>').attr('value', array_ciudades[i].id).text(array_ciudades[i].nombre));
+        $("#sb_ciudad").append($('<option>').attr('value', array_ciudades[i].id).text(array_ciudades[i].nombre));
     }
-    $('#combob_ciudad').change(function () {
-        var valueSelected = this.value;
-        console.log(valueSelected);
+    $('#sb_ciudad').change(function () {
+        // console.log(this.value);
         for (i = 0; i < array_ciudades.length; i++) {
             if (this.value === array_ciudades[i].id) {
                 cambiarPosicionMapa(array_ciudades[i].longitud, array_ciudades[i].latitud, array_ciudades[i].zoom);
@@ -321,26 +324,37 @@ function cargarProvinciaRuta() {
         }
     });
     $("#filtros").append($('<input>').attr('id', 'in_buscar').attr('type', 'text').attr('placeholder', 'Ej: Restaurante Chino'));
-    $("#filtros").append($('<button>').attr('id', 'btn_buscar').attr('type', 'button').text('Buscar').attr('class', 'et_pb_button'));
+    $("#filtros").append($('<button>').attr('id', 'btn_buscar').attr('type', 'button').text('Buscar').attr('class', 'submit et_pb_button'));
     $('#btn_buscar').click(function () {
         var palabra = $("#in_buscar").val();
         console.log("palabra: " + palabra);
         if (palabra !== "") {
             for (i = 0; i < array_ciudades.length; i++) {
-                if ($("#combob_ciudad option:selected").val() === "00000") {
+                if ($("#sb_ciudad option:selected").val() === "00000") {
                     alert("Debe elegir una ciudad de la provincia");
                     break;
                 }
-                else if ($("#combob_ciudad option:selected").val() === array_ciudades[i].id) {
+                else if ($("#sb_ciudad option:selected").val() === array_ciudades[i].id) {
                     // cambiarPosicionMapa(array_ciudades[i].longitud, array_ciudades[i].latitud, array_ciudades[i].zoom);
                     consultaHere(palabra, array_ciudades[i].longitud, array_ciudades[i].latitud);
                 }
             }
         }
-        else{
+        else {
             alert("Debe indicar algo en el buscador");
         }
     });
+    $("#filtros").append($('<div>').attr("id", "sitios_guardados"));
+    $("#sitios_guardados")
+        .prepend($(
+            '<div class="et_pb_module et_pb_text et_pb_text_4 texto-azul et_pb_bg_layout_light  et_pb_text_align_left">' +
+            '<div class="et_pb_text_inner">' +
+            '<h2 class="cabecera-destacados texto-azul"><strong>Guardados</strong></h2>' +
+            '<p><img class="senefa-agenda" src="/wp-content/uploads/2018/05/fondo-destacados-home.png"></p>' +
+            '<div style="clear: both;"></div>' +
+            '</div>' +
+            '</div>'));
+
     $("#resultados")
         .prepend($(
             '<div class="et_pb_module et_pb_text et_pb_text_4 texto-azul et_pb_bg_layout_light  et_pb_text_align_left">' +
@@ -350,6 +364,7 @@ function cargarProvinciaRuta() {
             '<div style="clear: both;"></div>' +
             '</div>' +
             '</div>'));
+    $("#resultados").append($('<div>').attr("id", "resultados_busqueda"));
 
 }
 
@@ -784,26 +799,17 @@ function pintarPuntosMapa(conjunto_puntos, id_conjunto_puntos) {
 function pintarInfoSitio(conjunto_sitios, id_div_texto) {
     console.log(conjunto_sitios);
 
-    var tabla_sitios = $('<table>').addClass('foo');
-    var fila = $('<tr>' +
-        '<th>' + 'Nombre' + '</th>' +
-        '<th>' + 'Dirección' + '</th>' +
-        '<th>' + 'Info adicional' + '</th>' +
-        '<th>' + 'Coordenadas' + '</th>' +
-        '<th>' + 'Categoria' + '</th>' +
-        '<th>' + 'Telefono' + '</th>' +
-        '<th>' + 'Web' + '</th>' +
-        '<th>' + 'Email' + '</th>' +
-        '<th>' + 'Horario' + '</th>' +
-        '</tr>'
+    var tabla_sitios = $('<table>').addClass('tablepress tablepress-id-14');
+    var fila = $(
+        '<thead>' +
+        '<tr class="row-1 odd">' +
+        '<th class="column-1"> </th>' +
+        '</tr>' +
+        '</thead>'
     );
     tabla_sitios.append(fila);
 
-    conjunto_sitios.features.forEach(function (sitio) {
-        // $('#' + id_div_texto).append($('<p>').text("Nombre: " + sitio.properties.nombre));
-        // $('#' + id_div_texto).append($('<p>').text("Dirección: " + sitio.properties.direccion));
-        // $('#' + id_div_texto).append($('<p>').text("Info adicional: " + sitio.properties.info_adicional));
-        // $('#' + id_div_texto).append($('<p>').text("Coordenadas: " + sitio.geometry.coordinates[0] + ", " + sitio.geometry.coordinates[0]));
+    conjunto_sitios.features.forEach(function (sitio, indice) {
         var telefonos = "";
         var webs = "";
         var correos = "";
@@ -814,7 +820,7 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
         }
         if (typeof sitio.properties.web !== "undefined") {
             sitio.properties.web.forEach(function (web) {
-                webs += '<br>' + web;
+                webs += '<br>' + '<a href="' + web + '" target="_blank" rel="noopener noreferrer">' + web + '</a>';
             });
         }
         if (typeof sitio.properties.email !== "undefined") {
@@ -823,18 +829,41 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
             });
         }
 
-        fila = $('<tr>' +
-            '<td>' + sitio.properties.nombre + '</td>' +
-            '<td>' + sitio.properties.direccion + '</td>' +
-            '<td>' + sitio.properties.info_adicional + '</td>' +
-            '<td>' + sitio.geometry.coordinates[0] + ", " + sitio.geometry.coordinates[1] + '</td>' +
-            '<td>' + sitio.properties.categoria + '</td>' +
-            '<td>' + telefonos + '</td>' +
-            '<td>' + webs + '</td>' +
-            '<td>' + correos + '</td>' +
-            '<td>' + sitio.properties.horario + '</td>' +
-            '</tr>'
-        );
+        var fila_cadena = "";
+        if (indice % 2 === 0) {
+            fila_cadena = '<tr class="row-' + indice + ' even">';
+        }
+        else {
+            fila_cadena = '<tr class="row-' + indice + ' odd">';
+
+        }
+
+        fila_cadena +=
+            '<td class="column-1">' +
+            '<p><b>' + sitio.properties.nombre + '</b> (Categoria: ' + sitio.properties.categoria + ')</p>' +
+            sitio.properties.direccion + '<br>';
+        if (telefonos !== "") {
+            fila_cadena += 'Tel: ' + telefonos + '<br>';
+        }
+        if (correos !== "") {
+            fila_cadena += 'Email: ' + correos + '<br>';
+        }
+        if (webs !== "") {
+            fila_cadena += 'Web: ' + webs + '<br>';
+        }
+        fila_cadena += '<button id="guardar_sitio_' + indice + '" type="button" class="guardar_sitio">Guardar sitio</button>';
+        // fila_cadena += '<button id="guardar_sitio" type="button">Guardar sitio</button>';
+        fila_cadena += '</td></tr>';
+
+        $('.guardar_sitio').click(function () {
+            console.log("en el boton de las filas");
+            // Getting all the rows next to the row 
+            // containing the clicked button 
+            var child = $(this).closest('tr').nextAll();
+            console.log(child);
+        });
+
+        fila = $(fila_cadena);
         tabla_sitios.append(fila);
     })
     $('#' + id_div_texto).append(tabla_sitios);
@@ -1223,21 +1252,20 @@ function consultaHere(palabra, longitud, latitud) {
     var api_key = "3BMlnB66GYJQQWsXMr5WzcniU81_d_ENmTrOocHDUc0";
 
     $.ajax({
-        url: 'https://discover.search.hereapi.com/v1/discover?in=circle:' + latitud + ',' + longitud + ';r=1000' + '&limit=100' + '&q=' + palabra + '&apiKey=' + api_key,
+        url: 'https://discover.search.hereapi.com/v1/discover?in=circle:' + latitud + ',' + longitud + ';r=5000' + '&limit=100' + '&q=' + palabra + '&apiKey=' + api_key,
         type: "get",
         dataType: 'json',
         success: function (data) {
-            console.log("ini data Here");
-            console.log(data);
-            console.log("fin data Here");
+            // console.log("ini data Here");
+            // console.log(data);
+            // console.log("fin data Here");
 
             var here_data = {};
             here_data['categoria'] = "here_data";
             here_data['type'] = 'FeatureCollection';
             here_data['features'] = [];
             for (i = 0; i < data.items.length; i++) {
-                // if (i === 0 || (data.items[i].position.lng !== data.items[i - 1].position.lng && data.items[i].position.lat !== data.items[i - 1].position.lat)) 
-                {
+                if (i === 0 || (data.items[i].position.lng !== data.items[i - 1].position.lng && data.items[i].position.lat !== data.items[i - 1].position.lat)) {
                     var item_data_here = {};
                     var item_data_here_properties = {};
                     // item_data_here_properties['icon'] = clasificarCategoria((data.items[i].categories[0].alias).toLowerCase());
@@ -1296,8 +1324,19 @@ function consultaHere(palabra, longitud, latitud) {
             }
 
             // console.log(here_data);
-            pintarPuntosMapa(here_data, 'here_data');
-            // pintarInfoSitio(here_data, "datos_renfe_estaciones")
+            for (i = 0; i < array_capas_mapa.length; i++) {
+                if (array_capas_mapa[i].id === 'here_data') {
+                    borrarPuntosMapa('here_data')
+                    array_capas_mapa.splice(i, 1);
+                }
+            }
+            if (here_data.features.length !== 0) {
+                var capa_mapa = { id: 'here_data', datos: here_data };
+                array_capas_mapa.push(capa_mapa);
+                pintarPuntosMapa(here_data, 'here_data');
+                $('#resultados_busqueda').empty();
+                pintarInfoSitio(here_data, 'resultados_busqueda')
+            }
         },
         error: function (errorMessage) {
             console.log("error_data_Here");
