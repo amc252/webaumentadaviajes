@@ -12,36 +12,45 @@
 var $ = window.jQuery;
 
 var tipo_punto = {
-    museo: 'museum',
-    parque: 'park',
-    restaurante: 'restaurant',
-    estacion_tren: 'rail',
-    triangulo: 'triangle',
-    recarga_electrica: 'charging-station', // este no funca
-    centros_asistencia: 'doctor',
-    centros_salud: 'hospital',
-    clinica_privada: 'defibrillator', // este no funca
-    centros_deportivos: 'volleyball', // este no funca
-    hoteles: 'lodging',
-    centros_educativos: 'school',
-    estaciones_alcoi: 'rail-light',
-    gasolineras: 'fuel',
-    farmacias: 'pharmacy',
-    autobuses: 'bus',
-    policia: 'police',
+    //iconos icons8 material
     ruta_ovidi: 'marker',
     ruta_camilo_sesto: 'marker',
     ruta_industrial: 'marker',
-    puntos_wifi: 'viewpoint', // este no funca
+    museo: 'museum',
+    parque: 'evergreen',
+    restaurante: 'restaurant',
+    estacion_tren: 'train',
+    recarga_electrica: 'charge-battery',
+    centros_asistencia: 'hospital',
+    centros_salud: 'hospital-2',
+    clinica_privada: 'hospital',
+    centros_deportivos: 'basketball',
+    hoteles: 'hotel-information',
+    centros_educativos: 'school-building',
+    estaciones_alcoi: 'train',
+    gasolineras: 'gas-station',
+    farmacias: 'hospital-2',
+    autobuses: 'bus',
+    policia: 'police-badge',
+    puntos_wifi: 'internet-antenna',
     piscinas_publicas: 'swimming',
     bar: 'bar',
     cafe: 'cafe',
-    tienda: 'grocery',
-    plaza: 'monument',
-    panaderia: 'bakery',
-    heladeria: 'ice-cream',
-    gato: 'cat', // esto es la prueba de poner iconos propios
-    cuadrado: 'square',
+    tienda: 'shopping-cart',
+    plaza: 'piazza',
+    panaderia: 'bread',
+    heladeria: 'ice-cream-cone',
+    playa: 'beach',
+    poi: 'point-of-interest',
+    fiesta: 'champagne',
+    chino: 'noodles',
+    pizza: 'pizza',
+    italiano: 'spaghetti',
+    comida_rapida: 'hamburger',
+    //iconos genéricos
+    punto: 'marker',
+    triangulo: 'triangle-stroked',
+    //iconos del tiempo
     sol: 'sun',
     nubes: 'clouds',
     parcialmente_nublado_dia: 'partly-cloudy-day',
@@ -685,6 +694,51 @@ function cargarMapa(id_div_mapa, longitud_inicial, latitud_inicial, zoom_inicial
             });
         })
 
+        var id_icono_sitios = [
+            'marker',
+            'triangle-stroked',
+            'museum',
+            'evergreen',
+            'train',
+            'charge-battery',
+            'hospital-2',
+            'basketball',
+            'hotel-information',
+            'school-building',
+            'gas-station',
+            'hospital',
+            'bus',
+            'police-badge',
+            'internet-antenna',
+            'swimming',
+            'bar',
+            'cafe',
+            'shopping-cart',
+            'piazza',
+            'bread',
+            'ice-cream-cone',
+            'beach',
+            'point-of-interest',
+            'champagne',
+            'restaurant',
+            'noodles',
+            'pizza',
+            'spaghetti',
+            'hamburger'
+        ];
+
+        id_icono_sitios.forEach(function (id) {
+            map.on('load', function () {
+                map.loadImage(
+                    'https://img.icons8.com/material/0.8x/' + id + '--v1.png',
+                    function (error, image) {
+                        if (error) { throw error };
+                        map.addImage(id, image);
+                    }
+                );
+            });
+        })
+
         // cargarFourSquare();
     });
 }
@@ -720,7 +774,7 @@ function pintarPuntosMapa(conjunto_puntos, id_conjunto_puntos) {
             'type': 'symbol',
             'source': id_conjunto_puntos,
             'layout': {
-                'icon-image': '{icon}-15',
+                'icon-image': '{icon}',
                 'icon-allow-overlap': true,
                 // 'text-allow-overlap': true,
                 // 'text-field': '{nombre}',
@@ -855,18 +909,17 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
         // fila_cadena += '<button id="guardar_sitio" type="button">Guardar sitio</button>';
         fila_cadena += '</td></tr>';
 
-        $('.guardar_sitio').click(function () {
-            console.log("en el boton de las filas");
-            // Getting all the rows next to the row 
-            // containing the clicked button 
-            var child = $(this).closest('tr').nextAll();
-            console.log(child);
-        });
-
         fila = $(fila_cadena);
         tabla_sitios.append(fila);
     })
     $('#' + id_div_texto).append(tabla_sitios);
+    $('.guardar_sitio').click(function () {
+        console.log("en el boton de las filas");
+
+        var $row = $(this).closest("tr");
+        var $text = $row.find(".column-1");
+        console.log($text);
+    });
 }
 
 function borrarPuntosMapa(id_conjunto_puntos) {
@@ -1048,16 +1101,29 @@ function cargarFourSquare() {
 
 function clasificarCategoria(nombre_icono) {
     var icono;
-    if ((nombre_icono).includes("restaurant") ||
+    if ((nombre_icono).includes("pizz")) {
+        icono = tipo_punto.pizza;
+    }
+    else if ((nombre_icono).includes("italian") ||
+        (nombre_icono).includes("italiano")) {
+        icono = tipo_punto.italiano;
+    }
+    else if ((nombre_icono).includes("chinese") ||
+        (nombre_icono).includes("chino")) {
+        icono = tipo_punto.chino;
+    }
+    else if ((nombre_icono).includes("rápida")) {
+        icono = tipo_punto.comida_rapida;
+    }
+    else if ((nombre_icono).includes("restaurant") ||
         (nombre_icono).includes("bistr") ||
-        (nombre_icono).includes("pizz") ||
         (nombre_icono).includes("spanish") ||
-        (nombre_icono).includes("italian") ||
         (nombre_icono).includes("mediterranean") ||
         (nombre_icono).includes("arro") ||
         (nombre_icono).includes("catalan") ||
-        (nombre_icono).includes("chinese") ||
-        (nombre_icono).includes("cuisine")) {
+        (nombre_icono).includes("cuisine") ||
+        (nombre_icono).includes("gourmet") ||
+        (nombre_icono).includes("delicatessen")) {
         icono = tipo_punto.restaurante;
     }
     else if ((nombre_icono).includes("pub") ||
@@ -1071,7 +1137,10 @@ function clasificarCategoria(nombre_icono) {
         (nombre_icono).includes("coffee")) {
         icono = tipo_punto.cafe;
     }
-    else if ((nombre_icono).includes("tienda")) {
+    else if ((nombre_icono).includes("tienda") ||
+        (nombre_icono).includes("botiga") ||
+        (nombre_icono).includes("regalo") ||
+        (nombre_icono).includes("artículo")) {
         icono = tipo_punto.tienda;
     }
     else if ((nombre_icono).includes("hotel")) {
@@ -1094,6 +1163,15 @@ function clasificarCategoria(nombre_icono) {
     }
     else if ((nombre_icono).includes("muse")) {
         icono = tipo_punto.museo;
+    }
+    else if ((nombre_icono).includes("playa")) {
+        icono = tipo_punto.playa;
+    }
+    else if ((nombre_icono).includes("interés")) {
+        icono = tipo_punto.poi;
+    }
+    else if ((nombre_icono).includes("fiesta")) {
+        icono = tipo_punto.fiesta;
     }
     else {
         icono = tipo_punto.triangulo;
@@ -1268,8 +1346,8 @@ function consultaHere(palabra, longitud, latitud) {
                 if (i === 0 || (data.items[i].position.lng !== data.items[i - 1].position.lng && data.items[i].position.lat !== data.items[i - 1].position.lat)) {
                     var item_data_here = {};
                     var item_data_here_properties = {};
-                    // item_data_here_properties['icon'] = clasificarCategoria((data.items[i].categories[0].alias).toLowerCase());
-                    item_data_here_properties['icon'] = tipo_punto.triangulo;
+                    item_data_here_properties['icon'] = clasificarCategoria((data.items[i].categories[0].name).toLowerCase());
+                    // item_data_here_properties['icon'] = tipo_punto.triangulo;
                     var item_data_here_geometry = {};
                     item_data_here_properties['nombre'] = data.items[i].title;
                     item_data_here_properties['direccion'] = data.items[i].address.street + " " + data.items[i].address.houseNumber + " " + data.items[i].address.city;
@@ -1575,7 +1653,6 @@ function pushCiudadTiempo(array, id, nombre, latitud, longitud) {
 
     var item_data_tiempo = {};
     var item_data_tiempo_properties = {};
-    item_data_tiempo_properties['icon'] = tipo_punto.cuadrado;
     item_data_tiempo_properties['icon'] = tipo_punto.sol;
     var item_data_tiempo_geometry = {};
     item_data_tiempo_properties['direccion'] = "";
