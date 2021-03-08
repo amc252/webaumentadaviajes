@@ -363,6 +363,7 @@ function cargarProvinciaRuta() {
             '<div style="clear: both;"></div>' +
             '</div>' +
             '</div>'));
+    $("#sitios_guardados").append($('<div>').attr("id", "sitios_guardados_lista"));
 
     $("#resultados")
         .prepend($(
@@ -851,7 +852,8 @@ function pintarPuntosMapa(conjunto_puntos, id_conjunto_puntos) {
 }
 
 function pintarInfoSitio(conjunto_sitios, id_div_texto) {
-    console.log(conjunto_sitios);
+    // console.log(conjunto_sitios);
+    $('#' + id_div_texto).empty();
 
     var tabla_sitios = $('<table>').addClass('tablepress tablepress-id-14');
     var fila = $(
@@ -893,7 +895,7 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
         }
 
         fila_cadena +=
-            '<td class="column-1">' +
+            '<td class="column-1" id="[' + sitio.geometry.coordinates[0] + ',' + sitio.geometry.coordinates[1] + ']">' +
             '<p><b>' + sitio.properties.nombre + '</b> (Categoria: ' + sitio.properties.categoria + ')</p>' +
             sitio.properties.direccion + '<br>';
         if (telefonos !== "") {
@@ -918,7 +920,124 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
 
         var $row = $(this).closest("tr");
         var $text = $row.find(".column-1");
-        console.log($text);
+
+        var $this = $(this);
+        $this.toggleClass('guardado');
+        if ($this.hasClass('guardado')) {
+            $this.text('Quitar sitio');
+            conjunto_sitios.features.forEach(function (sitio) {
+                var aux_coordenadas = '[' + sitio.geometry.coordinates[0] + ',' + sitio.geometry.coordinates[1] + ']';
+                if (aux_coordenadas === $text[0].id) {
+                    array_sitios_guardados.push(sitio);
+                }
+            });
+        } else {
+            $this.text('Guardar sitio');
+            array_sitios_guardados.forEach(function (sitio, indice) {
+                var aux_coordenadas = '[' + sitio.geometry.coordinates[0] + ',' + sitio.geometry.coordinates[1] + ']';
+                if (aux_coordenadas === $text[0].id) {
+                    array_sitios_guardados.splice(indice, 1);
+                }
+            });
+        }
+
+        pintarInfoSitioGuardados();
+
+        console.log("array_sitios_guardados");
+        console.log(array_sitios_guardados);
+    });
+}
+
+function pintarInfoSitioGuardados() {
+
+    $('#sitios_guardados_lista').empty();
+    var tabla_sitios = $('<table>').addClass('tablepress tablepress-id-14');
+    var fila = $(
+        '<thead>' +
+        '<tr class="row-1 odd">' +
+        '<th class="column-1"> </th>' +
+        '</tr>' +
+        '</thead>'
+    );
+    tabla_sitios.append(fila);
+
+    array_sitios_guardados.forEach(function (sitio, indice) {
+        var telefonos = "";
+        var webs = "";
+        var correos = "";
+        if (typeof sitio.properties.telefono !== "undefined") {
+            sitio.properties.telefono.forEach(function (tlf) {
+                telefonos += '<br>' + tlf;
+            });
+        }
+        if (typeof sitio.properties.web !== "undefined") {
+            sitio.properties.web.forEach(function (web) {
+                webs += '<br>' + '<a href="' + web + '" target="_blank" rel="noopener noreferrer">' + web + '</a>';
+            });
+        }
+        if (typeof sitio.properties.email !== "undefined") {
+            sitio.properties.email.forEach(function (email) {
+                correos += '<br>' + email;
+            });
+        }
+
+        var fila_cadena = "";
+        if (indice % 2 === 0) {
+            fila_cadena = '<tr class="row-' + indice + ' even">';
+        }
+        else {
+            fila_cadena = '<tr class="row-' + indice + ' odd">';
+
+        }
+
+        fila_cadena +=
+            '<td class="column-1" id="[' + sitio.geometry.coordinates[0] + ',' + sitio.geometry.coordinates[1] + ']">' +
+            '<p><b>' + sitio.properties.nombre + '</b> (Categoria: ' + sitio.properties.categoria + ')</p>' +
+            sitio.properties.direccion + '<br>';
+        if (telefonos !== "") {
+            fila_cadena += 'Tel: ' + telefonos + '<br>';
+        }
+        if (correos !== "") {
+            fila_cadena += 'Email: ' + correos + '<br>';
+        }
+        if (webs !== "") {
+            fila_cadena += 'Web: ' + webs + '<br>';
+        }
+        fila_cadena += '<button id="guardar_sitio_' + indice + '" type="button" class="guardar_sitio_guardados guardado">Quitar sitio</button>';
+        fila_cadena += '</td></tr>';
+
+        fila = $(fila_cadena);
+        tabla_sitios.append(fila);
+    })
+    $('#sitios_guardados_lista').append(tabla_sitios);
+    $('.guardar_sitio_guardados').click(function () {
+        console.log("en el boton de las filas");
+
+        var $row = $(this).closest("tr");
+        var $text = $row.find(".column-1");
+        var aux_coordenadas = "";
+        array_sitios_guardados.forEach(function (sitio, indice) {
+            aux_coordenadas = '[' + sitio.geometry.coordinates[0] + ',' + sitio.geometry.coordinates[1] + ']';
+            if (aux_coordenadas === $text[0].id) {
+                array_sitios_guardados.splice(indice, 1);
+            }
+        });
+
+        pintarInfoSitioGuardados();
+
+        $('#resultados_busqueda > table').children('tr').each(function (i, v) {
+            var aux_id_resutlado_busqueda = $(this).children('td')[0].id;
+            if (aux_id_resutlado_busqueda === aux_coordenadas) {
+                // console.log(aux_id_resutlado_busqueda);
+                var $boton = $(this).children('td').children('button');
+                $boton.toggleClass('guardado');
+                if ($boton.hasClass('guardado')) {
+                    $boton.text('Quitar sitio');
+                } else {
+                    $boton.text('Guardar sitio');
+                }
+            }
+        })
     });
 }
 
@@ -1412,7 +1531,6 @@ function consultaHere(palabra, longitud, latitud) {
                 var capa_mapa = { id: 'here_data', datos: here_data };
                 array_capas_mapa.push(capa_mapa);
                 pintarPuntosMapa(here_data, 'here_data');
-                $('#resultados_busqueda').empty();
                 pintarInfoSitio(here_data, 'resultados_busqueda')
             }
         },
