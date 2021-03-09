@@ -43,6 +43,8 @@ var tipo_punto = {
     playa: 'beach',
     poi: 'point-of-interest',
     fiesta: 'champagne',
+    parque_tematico: 'theme-park',
+    cine: 'cinema-',
     chino: 'noodles',
     pizza: 'pizza',
     italiano: 'spaghetti',
@@ -656,16 +658,6 @@ function cargarMapa(id_div_mapa, longitud_inicial, latitud_inicial, zoom_inicial
                 // console.log('fin layers');
             }
         });
-        // cargar una imagen como icono
-        // map.on('load', function () {
-        //     map.loadImage(
-        //         'https://img.icons8.com/officel/2x/sun.png',
-        //         function (error, image) {
-        //             if (error) { throw error };
-        //             map.addImage('sun', image);
-        //         }
-        //     );
-        // });
 
         //cargar los iconos para que esten disponibles en el mapa
         var id_icono_tiempo = [
@@ -721,6 +713,8 @@ function cargarMapa(id_div_mapa, longitud_inicial, latitud_inicial, zoom_inicial
             'beach',
             'point-of-interest',
             'champagne',
+            'theme-park',
+            'cinema-',
             'restaurant',
             'noodles',
             'pizza',
@@ -851,6 +845,15 @@ function pintarPuntosMapa(conjunto_puntos, id_conjunto_puntos) {
     });
 }
 
+function pintarPuntosMapaGuardados() {
+    var id_conjunto_puntos = 'sitios_guardados'
+    var aux_pintar_puntos = {};
+    aux_pintar_puntos['categoria'] = id_conjunto_puntos;
+    aux_pintar_puntos['type'] = 'FeatureCollection';
+    aux_pintar_puntos['features'] = array_sitios_guardados;
+    pintarPuntosMapa(aux_pintar_puntos, id_conjunto_puntos);
+}
+
 function pintarInfoSitio(conjunto_sitios, id_div_texto) {
     // console.log(conjunto_sitios);
     $('#' + id_div_texto).empty();
@@ -859,7 +862,7 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
     var fila = $(
         '<thead>' +
         '<tr class="row-1 odd">' +
-        '<th class="column-1"> </th>' +
+        '<th class="column-1"> <button id="mostrar_resultados" type="button">Ocultar resultados en el mapa</button></th>' +
         '</tr>' +
         '</thead>'
     );
@@ -943,19 +946,39 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
 
         pintarInfoSitioGuardados();
 
-        console.log("array_sitios_guardados");
-        console.log(array_sitios_guardados);
+        // console.log("array_sitios_guardados");
+        // console.log(array_sitios_guardados);
+    });
+
+    //Despues de que se añada la tabla, hay que añadir el evento
+    $('#mostrar_resultados').click(function () {
+        var $this = $(this);
+        $this.toggleClass('mostrar');
+        if ($this.hasClass('mostrar')) {
+            map.setLayoutProperty('here_data', 'visibility', 'none');
+            $this.text('Mostrar resultados en el mapa');
+        }
+        else {
+            map.setLayoutProperty('here_data', 'visibility', 'visible');
+            $this.text('Ocultar resultados en el mapa');
+        }
     });
 }
 
 function pintarInfoSitioGuardados() {
+    var mapLayer = map.getLayer('sitios_guardados');
+    if (typeof mapLayer !== 'undefined') {
+        // Remove map layer & source.
+        map.removeLayer('sitios_guardados').removeSource('sitios_guardados');
+    }
+    pintarPuntosMapaGuardados();
 
     $('#sitios_guardados_lista').empty();
-    var tabla_sitios = $('<table>').addClass('tablepress tablepress-id-14');
+    var tabla_sitios = $('<table>').addClass('tablepress tablepress-id-14').css({ 'word-wrap': 'break-word', 'table-layout': 'fixed', 'width': '100%' });
     var fila = $(
         '<thead>' +
         '<tr class="row-1 odd">' +
-        '<th class="column-1"> </th>' +
+        '<th class="column-1"> <button id="mostrar_guardados" type="button">Ocultar sitios guardados en el mapa</button></th>' +
         '</tr>' +
         '</thead>'
     );
@@ -1027,7 +1050,7 @@ function pintarInfoSitioGuardados() {
 
         $('#resultados_busqueda > table').children('tr').each(function (i, v) {
             var aux_id_resutlado_busqueda = $(this).children('td')[0].id;
-            if (aux_id_resutlado_busqueda === aux_coordenadas) {
+            if (aux_id_resutlado_busqueda === $text[0].id) {
                 // console.log(aux_id_resutlado_busqueda);
                 var $boton = $(this).children('td').children('button');
                 $boton.toggleClass('guardado');
@@ -1038,6 +1061,20 @@ function pintarInfoSitioGuardados() {
                 }
             }
         })
+    });
+
+    //Despues de que se añada la tabla, hay que añadir el evento
+    $('#mostrar_guardados').click(function () {
+        var $this = $(this);
+        $this.toggleClass('mostrar');
+        if ($this.hasClass('mostrar')) {
+            map.setLayoutProperty('sitios_guardados', 'visibility', 'none');
+            $this.text('Mostrar sitios guardados en el mapa');
+        }
+        else {
+            map.setLayoutProperty('sitios_guardados', 'visibility', 'visible');
+            $this.text('Ocultar sitios guardados en el mapa');
+        }
     });
 }
 
@@ -1268,6 +1305,10 @@ function clasificarCategoria(nombre_icono) {
     else if ((nombre_icono).includes("médico")) {
         icono = tipo_punto.centros_salud;
     }
+    else if ((nombre_icono).includes("temàtic") ||
+        (nombre_icono).includes("temático")) {
+        icono = tipo_punto.parque_tematico;
+    }
     else if ((nombre_icono).includes("parque")) {
         icono = tipo_punto.parque;
     }
@@ -1291,6 +1332,9 @@ function clasificarCategoria(nombre_icono) {
     }
     else if ((nombre_icono).includes("fiesta")) {
         icono = tipo_punto.fiesta;
+    }
+    else if ((nombre_icono).includes("cine")) {
+        icono = tipo_punto.cine;
     }
     else {
         icono = tipo_punto.triangulo;
