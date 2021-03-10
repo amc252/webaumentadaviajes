@@ -169,7 +169,8 @@ $(document).ready(function () {
         // alert("si existe la pagina");
         if (pathname == "/contacto/") {
             // cargaContacto();
-            cargarProvinciaRuta();
+            // cargarProvinciaRuta();
+            cargarTiempo();
 
             setTimeout(
                 function () {
@@ -1612,87 +1613,116 @@ function consultaHere(palabra, longitud, latitud) {
 
 function cargarTiempo() {
     //esto es porque desaparecen unas imagenes sin motivo
-    // $(".jetpack-lazy-image").removeAttr("data-lazy-src");
-    // $(".jetpack-lazy-image").removeAttr("srcset");
+    $(".jetpack-lazy-image").removeAttr("data-lazy-src");
+    $(".jetpack-lazy-image").removeAttr("srcset");
 
-    // $("#mapa-contacto").remove();
+    $("#mapa-contacto").remove();
 
-    // $(".et_pb_row_2").empty();
-    // $(".et_pb_row_3").empty();
-    // $(".et_pb_row_1").empty();
+    $(".et_pb_row_2").empty();
+    $(".et_pb_row_3").empty();
+    $(".et_pb_row_1").empty();
 
-    $.ajax({
-        url: "https://es.wikipedia.org/w/api.php?origin=*&format=json&action=parse&page=Anexo:Municipios_de_la_provincia_de_Alicante",
-        type: "get",
-        dataType: "jsonp",
-        success: function (data) {
-            console.log("princiupio data");
-            console.log(data);
-            console.log("fin data");
-            // $(".et_pb_row_1").append($('<p>').append(data.parse.title));
-            // $(".et_pb_row_1").append('<hr>');
+    $("div.et_builder_inner_content, div.et_pb_gutters3")
+        .prepend($(
+            '<div class="et_pb_section et_pb_section_0 et_pb_with_background et_pb_fullwidth_section et_section_regular">' +
+            '<section id="cabecera-fondo-imagen" class="et_pb_module et_pb_fullwidth_header et_pb_fullwidth_header_0 et_pb_bg_layout_dark et_pb_text_align_left" style="background-image: url(https://www.alicanteturismo.com/wp-content/uploads/2018/06/eretaweb.jpg);">' + //pone forma y todo al gris
+            '<div class="et_pb_fullwidth_header_container left">' +
+            '<div class="header-content-container center">' +
+            '<div class="header-content">' +
+            '<div class="et_pb_header_content_wrapper">' +
+            '<h1 class="cabecera-home" style="text-align: center;">' +
+            '<img class="icono-cabecera aligncenter" src="/wp-content/uploads/2018/06/COMO-LLEGARb.png"> Planifica tu ruta por la provincia de Alicante' +
+            '</h1>' +
+            '<div style="clear: both; text-align: center;">&nbsp;</div>' +
+            '<h4 style="text-align: center;">Indica la pronvicia y usa el buscador para trazar una ruta con la información sobre alojamientos, restaurantes, parques...</h4>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="et_pb_fullwidth_header_overlay"></div>' +
+            '<div class="et_pb_fullwidth_header_scroll"></div>' +
+            '</section>' +
+            '</div>'
+        ));
 
+    $(".et_pb_row_1").append($('<div>').attr("id", "informacion_tiempo"));
+    $("#informacion_tiempo").append($('<div>').attr("id", "mapa_tiempo").attr("style", 'height: 500px;background-color:#08c;width: 550px;'));
+    cargarMapa("mapa_tiempo", "-0.4450000", "38.3550000", "8");
+    // setTimeout(
+    //     function () {
+    //         // cambiarPosicionMapa("-0.5000000", "38.3550000", "8");
+    //     }, 2000);
 
-            // console.log(data.parse.images[6]);
-            // $.ajax({
-            //     url: "https://es.wikipedia.org/w/api.php?origin=*&format=json&action=query&titles=File:" + data.parse.images[6] + "&prop=imageinfo&iiprop=url",
-            //     type: "get",
-            //     dataType: "jsonp",
-            //     success: function (data_image) {
-            //         // console.log(data_image);
-            //         // console.log(data_image.query.pages[-1].imageinfo[0].url);
-
-            //         $("#image_wiki").append("ini foto");
-            //         $("#image_wiki").append($('<img>').attr('width', 150).attr("src", data_image.query.pages[-1].imageinfo[0].url));
-            //         $("#image_wiki").append("fin foto");
-            //     },
-            //     error: function (errorMessage) {
-            //         console.log("error_imagen");
-            //         console.log(errorMessage);
-            //     }
-            // });
-            // $(".et_pb_row_1").append($('<div>').attr("id", "image_wiki"));
-            // $(".et_pb_row_1").append('<hr>');
-
-            $(".et_pb_row_1").append('<hr>');
-            //carga el articulo entero de la wikipedia y lo pone bonito
-            var markup = data.parse.text["*"];
-            var i = $('<div></div>').html(markup);
-            // $(".et_pb_row_1").append(i);
-            $(".et_pb_row_1").append($('<div>').attr("id", "info_wiki").append(markup));
-            $(".et_pb_row_1").append('<hr>');
-            $("#info_wiki > .mw-parser-output").children().not(".wikitable").remove();
-            // $(".wikitable").remove();
-
-        },
-        error: function (errorMessage) {
-            console.log("error_wikipedia");
-            console.log(errorMessage);
-        }
-    });
+    /*
+        $.ajax({
+            url: "https://es.wikipedia.org/w/api.php?origin=*&format=json&action=parse&page=Anexo:Municipios_de_la_provincia_de_Alicante",
+            type: "get",
+            dataType: "jsonp",
+            success: function (data) {
+                console.log("princiupio data");
+                console.log(data);
+                console.log("fin data");
+                // $(".et_pb_row_1").append($('<p>').append(data.parse.title));
+                // $(".et_pb_row_1").append('<hr>');
+    
+    
+                // console.log(data.parse.images[6]);
+                // $.ajax({
+                //     url: "https://es.wikipedia.org/w/api.php?origin=*&format=json&action=query&titles=File:" + data.parse.images[6] + "&prop=imageinfo&iiprop=url",
+                //     type: "get",
+                //     dataType: "jsonp",
+                //     success: function (data_image) {
+                //         // console.log(data_image);
+                //         // console.log(data_image.query.pages[-1].imageinfo[0].url);
+    
+                //         $("#image_wiki").append("ini foto");
+                //         $("#image_wiki").append($('<img>').attr('width', 150).attr("src", data_image.query.pages[-1].imageinfo[0].url));
+                //         $("#image_wiki").append("fin foto");
+                //     },
+                //     error: function (errorMessage) {
+                //         console.log("error_imagen");
+                //         console.log(errorMessage);
+                //     }
+                // });
+                // $(".et_pb_row_1").append($('<div>').attr("id", "image_wiki"));
+                // $(".et_pb_row_1").append('<hr>');
+    
+                $(".et_pb_row_1").append('<hr>');
+                //carga el articulo entero de la wikipedia y lo pone bonito
+                var markup = data.parse.text["*"];
+                var i = $('<div></div>').html(markup);
+                // $(".et_pb_row_1").append(i);
+                $(".et_pb_row_1").append($('<div>').attr("id", "info_wiki").append(markup));
+                $(".et_pb_row_1").append('<hr>');
+                $("#info_wiki > .mw-parser-output").children().not(".wikitable").remove();
+                // $(".wikitable").remove();
+    
+            },
+            error: function (errorMessage) {
+                console.log("error_wikipedia");
+                console.log(errorMessage);
+            }
+        });
+    */
 
     var tiempo_data = {};
     tiempo_data['categoria'] = "tiempo_data";
     tiempo_data['type'] = 'FeatureCollection';
     tiempo_data['features'] = [];
 
-    pushCiudadTiempo(tiempo_data, "03063", "Denia", "38.8407800", "0.1057400");
-    pushCiudadTiempo(tiempo_data, "03100", "Parcent", "38.7450200", "-0.0644600");
-    pushCiudadTiempo(tiempo_data, "03009", "Alcoy", "38.7054500", "-0.4743200");
-    pushCiudadTiempo(tiempo_data, "03140", "Villena", "38.6373000", "-0.8656800");
-    pushCiudadTiempo(tiempo_data, "03083", "Jijona", "38.5408600", "-0.5026300");
-    pushCiudadTiempo(tiempo_data, "03031", "Benidorm", "38.5381600", "-0.1309800");
-    pushCiudadTiempo(tiempo_data, "03066", "Elda", "38.4778300", "-0.7915700");
-    pushCiudadTiempo(tiempo_data, "03105", "Pinoso", "38.4016400", "-1.0419600");
-    pushCiudadTiempo(tiempo_data, "03014", "Alicante", "38.3451700", "-0.4814900");
-    pushCiudadTiempo(tiempo_data, "03065", "Elche", "38.2621800", "-0.7010700");
-    pushCiudadTiempo(tiempo_data, "03121", "SantaPola", "38.1916500", "-0.5658000");
-    pushCiudadTiempo(tiempo_data, "03099", "Orihuela", "38.0848300", "-0.9440100");
-    pushCiudadTiempo(tiempo_data, "03133", "Torrevieja", "37.9787200", "-0.6822200");
+    //Nos saltamos el primero, que es el por defecto general
+    for (i = 1; i < array_ciudades.length; i++) {
+        pushCiudadTiempo(tiempo_data,
+            array_ciudades[i].id,
+            array_ciudades[i].nombre,
+            array_ciudades[i].longitud,
+            array_ciudades[i].latitud);
+    }
 
     var api_key_aemet = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbWMyNTJAZ2Nsb3VkLnVhLmVzIiwianRpIjoiYmZlYzQ1ZTQtZGJjMC00MzM2LWJjZTUtMzVmNWM4NDk3ODRiIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE2MTMwNjE5OTAsInVzZXJJZCI6ImJmZWM0NWU0LWRiYzAtNDMzNi1iY2U1LTM1ZjVjODQ5Nzg0YiIsInJvbGUiOiIifQ.UHJNxiTqZCHD3p7AuKQsgamZi4_MLTvAR03xcci7g0w";
 
     var promesas = [];
+
 
     tiempo_data['features'].forEach(function (ciud) {
         var peticion = $.ajax({
@@ -1760,6 +1790,7 @@ function cargarTiempo() {
                     pintarPuntosMapa(tiempo_data, "info_tiempo");
                 }, 2000);
         });
+
 
     $.ajax({
         url: proxy_cors + "https://opendata.aemet.es/opendata/api/prediccion/provincia/hoy/03?api_key=" + api_key_aemet,
@@ -1836,7 +1867,7 @@ function gradosADecimal(grados, minutos, segundos, direccion) {
     return decimal;
 }
 
-function pushCiudadTiempo(array, id, nombre, latitud, longitud) {
+function pushCiudadTiempo(array, id, nombre, longitud, latitud) {
 
     var item_data_tiempo = {};
     var item_data_tiempo_properties = {};
