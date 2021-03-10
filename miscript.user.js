@@ -335,10 +335,10 @@ function cargarProvinciaRuta() {
         }
     });
     $("#filtros").append($('<input>').attr('id', 'in_buscar').attr('type', 'text').attr('placeholder', 'Ej: Restaurante Chino'));
-    $("#filtros").append($('<button>').attr('id', 'btn_buscar').attr('type', 'button').text('Buscar').attr('class', 'submit et_pb_button'));
+    $("#filtros").append($('<button>').attr('id', 'btn_buscar').attr('type', 'button').text('Buscar').attr('class', 'submit et_pb_button').css({ 'margin-top': '15px' }));
     $('#btn_buscar').click(function () {
         var palabra = $("#in_buscar").val();
-        console.log("palabra: " + palabra);
+        // console.log("palabra: " + palabra);
         if (palabra !== "") {
             for (i = 0; i < array_ciudades.length; i++) {
                 if ($("#sb_ciudad option:selected").val() === "00000") {
@@ -355,27 +355,23 @@ function cargarProvinciaRuta() {
             alert("Debe indicar algo en el buscador");
         }
     });
-    $("#filtros").append($('<div>').attr("id", "sitios_guardados"));
+    $("#filtros").append($('<div>').attr("id", "sitios_guardados").css({ 'padding-top': '25px' }));
     $("#sitios_guardados")
         .prepend($(
-            '<div class="et_pb_module et_pb_text et_pb_text_4 texto-azul et_pb_bg_layout_light  et_pb_text_align_left">' +
-            '<div class="et_pb_text_inner">' +
-            '<h2 class="cabecera-destacados texto-azul"><strong>Guardados</strong></h2>' +
-            '<p><img class="senefa-agenda" src="/wp-content/uploads/2018/05/fondo-destacados-home.png"></p>' +
-            '<div style="clear: both;"></div>' +
-            '</div>' +
-            '</div>'));
+            '<h3>' +
+            '<strong>Guardados  </strong>' +
+            '<img class="" src="/wp-content/uploads/2018/05/fondo-destacados-home.png" width="45" height="10">' +
+            '</h3>'
+        ));
     $("#sitios_guardados").append($('<div>').attr("id", "sitios_guardados_lista"));
 
     $("#resultados")
         .prepend($(
-            '<div class="et_pb_module et_pb_text et_pb_text_4 texto-azul et_pb_bg_layout_light  et_pb_text_align_left">' +
-            '<div class="et_pb_text_inner">' +
             '<h2 class="cabecera-destacados texto-azul"><strong>Resultados</strong></h2>' +
-            '<p><img class="senefa-agenda" src="/wp-content/uploads/2018/05/fondo-destacados-home.png"></p>' +
-            '<div style="clear: both;"></div>' +
-            '</div>' +
-            '</div>'));
+            '<p>' +
+            '<img class="senefa-agenda" src="/wp-content/uploads/2018/05/fondo-destacados-home.png">' +
+            '</p>'
+        ));
     $("#resultados").append($('<div>').attr("id", "resultados_busqueda"));
 
 }
@@ -919,8 +915,6 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
     })
     $('#' + id_div_texto).append(tabla_sitios);
     $('.guardar_sitio').click(function () {
-        console.log("en el boton de las filas");
-
         var $row = $(this).closest("tr");
         var $text = $row.find(".column-1");
 
@@ -1309,7 +1303,8 @@ function clasificarCategoria(nombre_icono) {
         (nombre_icono).includes("temático")) {
         icono = tipo_punto.parque_tematico;
     }
-    else if ((nombre_icono).includes("parque")) {
+    else if ((nombre_icono).includes("parque") ||
+        (nombre_icono).includes("parc")) {
         icono = tipo_punto.parque;
     }
     else if ((nombre_icono).includes("plaza")) {
@@ -1507,15 +1502,45 @@ function consultaHere(palabra, longitud, latitud) {
             here_data['features'] = [];
             for (i = 0; i < data.items.length; i++) {
                 if (i === 0 || (data.items[i].position.lng !== data.items[i - 1].position.lng && data.items[i].position.lat !== data.items[i - 1].position.lat)) {
+                    // console.log(data.items[i]);
                     var item_data_here = {};
                     var item_data_here_properties = {};
-                    item_data_here_properties['icon'] = clasificarCategoria((data.items[i].categories[0].name).toLowerCase());
-                    // item_data_here_properties['icon'] = tipo_punto.triangulo;
                     var item_data_here_geometry = {};
+                    if (typeof data.items[i].categories !== "undefined") {
+                        item_data_here_properties['icon'] = clasificarCategoria((data.items[i].categories[0].name).toLowerCase());
+                        item_data_here_properties['categoria'] = data.items[i].categories[0].name;
+                        item_data_here_properties['info_adicional'] = data.items[i].categories[0].name;
+                    }
+                    else {
+                        item_data_here_properties['icon'] = tipo_punto.punto;
+                        item_data_here_properties['categoria'] = "Sin categoría";
+                    }
                     item_data_here_properties['nombre'] = data.items[i].title;
-                    item_data_here_properties['direccion'] = data.items[i].address.street + " " + data.items[i].address.houseNumber + " " + data.items[i].address.city;
-                    item_data_here_properties['info_adicional'] = data.items[i].categories[0].name;
-                    item_data_here_properties['categoria'] = data.items[i].categories[0].name;
+                    var calle = data.items[i].address.street;
+                    var numero_calle = data.items[i].address.houseNumber;
+                    var ciudad = data.items[i].address.city
+                    var aux_direccion = "";
+
+                    if (typeof calle !== "undefined") {
+                        aux_direccion += calle;
+                    }
+                    else {
+                        aux_direccion += "";
+                    }
+                    if (typeof numero_calle !== "undefined") {
+                        aux_direccion += " " + numero_calle;
+                    }
+                    else {
+                        aux_direccion += "";
+                    }
+                    if (typeof ciudad !== "undefined") {
+                        aux_direccion += " " + ciudad;
+                    }
+                    else {
+                        aux_direccion += "";
+                    }
+
+                    item_data_here_properties['direccion'] = aux_direccion;
                     if (typeof data.items[i].contacts !== "undefined") {
                         if (typeof data.items[i].contacts[0].phone !== "undefined") {
                             var aux_array = [];
