@@ -1631,10 +1631,10 @@ function cargarTiempo() {
             '<div class="header-content">' +
             '<div class="et_pb_header_content_wrapper">' +
             '<h1 class="cabecera-home" style="text-align: center;">' +
-            '<img class="icono-cabecera aligncenter" src="/wp-content/uploads/2018/06/COMO-LLEGARb.png"> Planifica tu ruta por la provincia de Alicante' +
+            '<img class="icono-cabecera aligncenter" src="/wp-content/uploads/2018/06/MAS-INFORMACION-PRACTICAb.png"> Consulta el tiempo en Alicante' +
             '</h1>' +
             '<div style="clear: both; text-align: center;">&nbsp;</div>' +
-            '<h4 style="text-align: center;">Indica la pronvicia y usa el buscador para trazar una ruta con la información sobre alojamientos, restaurantes, parques...</h4>' +
+            '<h4 style="text-align: center;">Información detallada sobre el tiempo en la provincia de Alicante</h4>' +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -1646,12 +1646,13 @@ function cargarTiempo() {
         ));
 
     $(".et_pb_row_1").append($('<div>').attr("id", "informacion_tiempo"));
-    $("#informacion_tiempo").append($('<div>').attr("id", "mapa_tiempo").attr("style", 'height: 500px;background-color:#08c;width: 550px;'));
+    $("#informacion_tiempo").append($('<div>').attr("id", "fila1_tiempo").attr('class', 'row').css({ 'height': '500px' }));
+    $("#fila1_tiempo").append($('<div>').attr("id", "columna1_tiempo").attr('class', 'et_pb_column et_pb_column_1_2 et_pb_column_0'));
+    $("#fila1_tiempo").append($('<div>').attr("id", "columna2_tiempo").attr('class', 'et_pb_column et_pb_column_1_2 et_pb_column_1').css({ 'word-wrap': 'break-word' }));
+    $("#informacion_tiempo").append($('<div>').attr("id", "fila2_tiempo").attr('class', 'row'));
+    $("#fila2_tiempo").append($('<div>').attr("id", "informacion_adicional_tiempo"));
+    $("#columna1_tiempo").append($('<div>').attr("id", "mapa_tiempo").attr("style", 'height: 500px;background-color:#08c;width: 550px;'));
     cargarMapa("mapa_tiempo", "-0.4450000", "38.3550000", "8");
-    // setTimeout(
-    //     function () {
-    //         // cambiarPosicionMapa("-0.5000000", "38.3550000", "8");
-    //     }, 2000);
 
     /*
         $.ajax({
@@ -1723,7 +1724,6 @@ function cargarTiempo() {
 
     var promesas = [];
 
-
     tiempo_data['features'].forEach(function (ciud) {
         var peticion = $.ajax({
             url: proxy_cors + "https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/horaria/" + ciud['properties']['id'] + "?api_key=" + api_key_aemet,
@@ -1791,7 +1791,6 @@ function cargarTiempo() {
                 }, 2000);
         });
 
-
     $.ajax({
         url: proxy_cors + "https://opendata.aemet.es/opendata/api/prediccion/provincia/hoy/03?api_key=" + api_key_aemet,
         type: "get",
@@ -1812,7 +1811,9 @@ function cargarTiempo() {
                 // dataType: "json",
                 success: function (data_consulta) {
                     var data_array = data_consulta.split("ALACANT/ALICANTE");
-                    var texto = "Información del tiempo:\n" + data_array[data_array.length - 1].split("TEMPERATURAS")[0];
+                    var titulo_tiempo = data_array[0] + "ALACANT/ALICANTE" + data_array[1];
+                    var texto = data_array[data_array.length - 1].split("TEMPERATURAS")[0];
+                    $("#columna2_tiempo").append($('<p><strong>' + titulo_tiempo + '</strong></p>' + '<p>' + texto + '</p>'));
                     var temperaturas = "TEMPERATURAS" + data_array[data_array.length - 1].split("TEMPERATURAS")[1];
 
                     var lineas_temperatura = temperaturas.split("\n");
@@ -1839,10 +1840,10 @@ function cargarTiempo() {
                         }
                     }
 
-                    $(".et_pb_row_1").append('<hr>');
-                    $(".et_pb_row_1").append($('<div>').attr("id", "info_temperatura").append(lineas_temperatura[0]));
-                    $(".et_pb_row_1").append($('<div>').attr("id", "info_temperatura").append(tabla_temperaturas));
-                    $(".et_pb_row_1").append('<hr>');
+                    $("#columna2_tiempo").append('<br><hr>');
+                    $("#columna2_tiempo").append($('<div>').attr("id", "info_temperatura").append(lineas_temperatura[0]));
+                    $("#columna2_tiempo").append($('<div>').attr("id", "info_temperatura").append(tabla_temperaturas));
+                    $("#columna2_tiempo").append('<hr>');
                 },
                 error: function (errorMessage) {
                     console.log("error_tiempo_escrito2");
