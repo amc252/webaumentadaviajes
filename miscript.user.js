@@ -120,33 +120,23 @@ $(function () {
             }));
     $('#menu-item-161754 > .sub-menu').append(
         $('<li>')
-            .attr("id", "menu-item-tiempo")
-            .attr("class", "menu-item menu-item-type-post_type menu-item-object-page menu-item-tiempo")
+            .attr("id", "menu-item-tiempo-provincia")
+            .attr("class", "menu-item menu-item-type-post_type menu-item-object-page menu-item-tiempo-provincia")
             .append(
-                $('<a>').attr('href', "https://www.alicanteturismo.com/tiempo").append(
-                    $('<span>').attr('class', 'tab').append("Tiempo Alicante")
+                $('<a>').attr('href', "https://www.alicanteturismo.com/tiempo-provincia").append(
+                    $('<span>').attr('class', 'tab').append("Tiempo provincia")
                 ))
             .click(function () {
-                alert("Tiempo Alicante");
-                // var win = window.open("result.html");
-                // $(win).load(function () {
-                //     $("body").append("<p>Result</p>");
-                // });
             }));
     $('#menu-item-161754 > .sub-menu').append(
         $('<li>')
-            .attr("id", "menu-item-tiempo-alicante")
-            .attr("class", "menu-item menu-item-type-post_type menu-item-object-page menu-item-tiempo-alicante")
+            .attr("id", "menu-item-ruta-provincia")
+            .attr("class", "menu-item menu-item-type-post_type menu-item-object-page menu-item-ruta-provincia")
             .append(
-                $('<a>').attr('href', "https://www.alicanteturismo.com/tiempo-alicante").append(
-                    $('<span>').attr('class', 'tab').append("Tiempo")
+                $('<a>').attr('href', "https://www.alicanteturismo.com/ruta-provincia").append(
+                    $('<span>').attr('class', 'tab').append("Ruta provincia")
                 ))
             .click(function () {
-                alert("Tiempo");
-                // var win = window.open("result.html");
-                // $(win).load(function () {
-                //     $("body").append("<p>Result</p>");
-                // });
             }));
 
     // console.log("cargó todo");
@@ -163,6 +153,16 @@ $(document).ready(function () {
         $("#post-0").remove();
         if (pathname == "/alcoy") {
             cargaAlcoy();
+        }
+        switch (pathname) {
+            case "/tiempo":
+            case "/tiempo/":
+                cargarTiempo();
+                break;
+            case "/ruta-provincia":
+            case "/ruta-provincia/":
+                cargarProvinciaRuta();
+                break;
         }
     }
     else {
@@ -290,6 +290,12 @@ function cargarProvinciaRuta() {
     $(".et_pb_row_2").empty();
     $(".et_pb_row_3").empty();
     $(".et_pb_row_1").empty();
+    $("#main-content").empty();
+    $("#main-content").append($('<article>').attr("id", "articulo").attr("class", "page type-page status-publish has-post-thumbnail hentry"));
+    $("#articulo").append($('<div>').attr("class", "entry-content"));
+    $(".entry-content").append($('<div>').attr("id", "et-boc").attr("class", "et-boc"));
+    $("#et-boc").append($('<div>').attr("class", "et_builder_inner_content et_pb_gutters3"));
+
     $("div.et_builder_inner_content, div.et_pb_gutters3")
         .prepend($(
             '<div class="et_pb_section et_pb_section_0 et_pb_with_background et_pb_fullwidth_section et_section_regular">' +
@@ -313,8 +319,10 @@ function cargarProvinciaRuta() {
             '</div>'
         ));
 
-    $(".et_pb_row_1").append($('<div>').attr("id", "planificar_ruta"));
-    $("#planificar_ruta").append($('<div>').attr("id", "mapa_ruta").attr("style", 'height: 500px;background-color:#08c;width: 1000px;'));
+    $("div.et_builder_inner_content, div.et_pb_gutters3").append($('<div>').attr("class", "et_pb_section et_pb_section_1 et_section_regular"));
+    $("div.et_builder_inner_content, div.et_pb_gutters3").append($('<div>').attr("class", "et_pb_row et_pb_row_0"));
+    $(".et_pb_row_0").append($('<div>').attr("id", "planificar_ruta"));
+    $("#planificar_ruta").append($('<div>').attr("id", "mapa_ruta").attr("style", 'height: 500px;background-color:#08c;width: 100%;'));
     cargarMapa("mapa_ruta", "-0.5000000", "38.3550000", "8");
     setTimeout(
         function () {
@@ -855,7 +863,7 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
     // console.log(conjunto_sitios);
     $('#' + id_div_texto).empty();
 
-    var tabla_sitios = $('<table>').addClass('tablepress tablepress-id-14');
+    var tabla_sitios = $('<table>').addClass('tablepress tablepress-id-14').css({ 'word-wrap': 'break-word', 'table-layout': 'fixed', 'width': '100%' });
     var fila = $(
         '<thead>' +
         '<tr class="row-1 odd">' +
@@ -1621,6 +1629,11 @@ function cargarTiempo() {
     $(".et_pb_row_2").empty();
     $(".et_pb_row_3").empty();
     $(".et_pb_row_1").empty();
+    $("#main-content").empty();
+    $("#main-content").append($('<article>').attr("id", "articulo").attr("class", "page type-page status-publish has-post-thumbnail hentry"));
+    $("#articulo").append($('<div>').attr("class", "entry-content"));
+    $(".entry-content").append($('<div>').attr("id", "et-boc").attr("class", "et-boc"));
+    $("#et-boc").append($('<div>').attr("class", "et_builder_inner_content et_pb_gutters3"));
 
     $("div.et_builder_inner_content, div.et_pb_gutters3")
         .prepend($(
@@ -1645,7 +1658,9 @@ function cargarTiempo() {
             '</div>'
         ));
 
-    $(".et_pb_row_1").append($('<div>').attr("id", "informacion_tiempo"));
+    $("div.et_builder_inner_content, div.et_pb_gutters3").append($('<div>').attr("class", "et_pb_section et_pb_section_1 et_section_regular"));
+    $("div.et_builder_inner_content, div.et_pb_gutters3").append($('<div>').attr("class", "et_pb_row et_pb_row_0"));
+    $(".et_pb_row_0").append($('<div>').attr("id", "informacion_tiempo"));
     $("#informacion_tiempo").append($('<div>').attr("id", "fila1_tiempo").attr('class', 'row').css({ 'height': '500px' }));
     $("#fila1_tiempo").append($('<div>').attr("id", "columna1_tiempo").attr('class', 'et_pb_column et_pb_column_1_2 et_pb_column_0'));
     $("#fila1_tiempo").append($('<div>').attr("id", "columna2_tiempo").attr('class', 'et_pb_column et_pb_column_1_2 et_pb_column_1').css({ 'word-wrap': 'break-word' }));
