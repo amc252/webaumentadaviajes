@@ -155,8 +155,8 @@ $(document).ready(function () {
             cargaAlcoy();
         }
         switch (pathname) {
-            case "/tiempo":
-            case "/tiempo/":
+            case "/tiempo-provincia":
+            case "/tiempo-provincia/":
                 cargarTiempo();
                 break;
             case "/ruta-provincia":
@@ -281,6 +281,7 @@ function cargaContacto() {
 
 function cargarProvinciaRuta() {
 
+    $(document).attr("title", "Ruta provincia");
     //esto es porque desaparecen unas imagenes sin motivo
     $(".jetpack-lazy-image").removeAttr("data-lazy-src");
     $(".jetpack-lazy-image").removeAttr("srcset");
@@ -1620,6 +1621,8 @@ function consultaHere(palabra, longitud, latitud) {
 }
 
 function cargarTiempo() {
+    
+    $(document).attr("title", "Tiempo provincia");
     //esto es porque desaparecen unas imagenes sin motivo
     $(".jetpack-lazy-image").removeAttr("data-lazy-src");
     $(".jetpack-lazy-image").removeAttr("srcset");
