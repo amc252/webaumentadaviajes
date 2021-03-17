@@ -1621,7 +1621,7 @@ function consultaHere(palabra, longitud, latitud) {
 }
 
 function cargarTiempo() {
-    
+
     $(document).attr("title", "Tiempo provincia");
     //esto es porque desaparecen unas imagenes sin motivo
     $(".jetpack-lazy-image").removeAttr("data-lazy-src");
@@ -1669,6 +1669,7 @@ function cargarTiempo() {
     $("#fila1_tiempo").append($('<div>').attr("id", "columna2_tiempo").attr('class', 'et_pb_column et_pb_column_1_2 et_pb_column_1').css({ 'word-wrap': 'break-word' }));
     $("#informacion_tiempo").append($('<div>').attr("id", "fila2_tiempo").attr('class', 'row'));
     $("#fila2_tiempo").append($('<div>').attr("id", "informacion_adicional_tiempo"));
+    $("#informacion_tiempo").append($('<div>').attr("id", "cargando_gif").attr("class", "ai1ec-loading ai1ec-calendar-view-loading").css({ "display": "block" }));
     $("#columna1_tiempo").append($('<div>').attr("id", "mapa_tiempo").attr("style", 'height: 500px;background-color:#08c;width: 550px;'));
     cargarMapa("mapa_tiempo", "-0.4450000", "38.3550000", "8");
 
@@ -1806,6 +1807,7 @@ function cargarTiempo() {
             setTimeout(
                 function () {
                     pintarPuntosMapa(tiempo_data, "info_tiempo");
+                    $("#cargando_gif").css({ "display": "none" });
                 }, 2000);
         });
 
