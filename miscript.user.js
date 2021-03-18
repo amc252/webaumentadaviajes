@@ -6,7 +6,7 @@
 // @description Web aumentada de planificación de viajes
 // @match https://www.alicanteturismo.com/*
 // @grant none
-// @require http://code.jquery.com/jquery-3.5.1.min.js
+// // @require http://code.jquery.com/jquery-3.5.1.min.js
 // ==/UserScript==
 
 var $ = window.jQuery;
@@ -93,8 +93,46 @@ var array_sitios_guardados = [];
 // var proxy_cors = "https://cors-anywhere.herokuapp.com/";
 var proxy_cors = "https://afternoon-oasis-49174.herokuapp.com/";
 
+$(document).ready(function () {
+    cargarMenu();
+    var pathname = window.location.pathname;
+    // alert(pathname);
+    // alert("la pagina ha cargado");
+    // si es igual a 0, el id post-0 no existe
+    // este id es el que aparece cuando la página no existe
+    // si no existe este id entonces ha cargado algún articulo
+    if ($("#post-0").length != 0) {
+        $("#post-0").remove();
+        if (pathname == "/alcoy") {
+            cargaAlcoy();
+        }
+        switch (pathname) {
+            case "/tiempo-provincia":
+            case "/tiempo-provincia/":
+                cargarTiempo();
+                break;
+            case "/ruta-provincia":
+            case "/ruta-provincia/":
+                cargarProvinciaRuta();
+                break;
+        }
+    }
+    else {
+        // alert("si existe la pagina");
+        if (pathname == "/contacto/") {
+            // cargaContacto();
+            // cargarProvinciaRuta();
+            cargarTiempo();
 
-$(function () {
+            setTimeout(
+                function () {
+                    // cargarTiempo();
+                }, 1000);
+        }
+    }
+});
+
+function cargarMenu() {
     $('#top-menu').append(
         $('<li>')
             .attr("id", "menu-item-alcoy")
@@ -140,55 +178,7 @@ $(function () {
             }));
 
     // console.log("cargó todo");
-});
-
-$(document).ready(function () {
-    var pathname = window.location.pathname;
-    // alert(pathname);
-    // alert("la pagina ha cargado");
-    // si es igual a 0, el id post-0 no existe
-    // este id es el que aparece cuando la página no existe
-    // si no existe este id entonces ha cargado algún articulo
-    if ($("#post-0").length != 0) {
-        $("#post-0").remove();
-        if (pathname == "/alcoy") {
-            cargaAlcoy();
-        }
-        switch (pathname) {
-            case "/tiempo-provincia":
-            case "/tiempo-provincia/":
-                cargarTiempo();
-                break;
-            case "/ruta-provincia":
-            case "/ruta-provincia/":
-                cargarProvinciaRuta();
-                break;
-        }
-    }
-    else {
-        // alert("si existe la pagina");
-        if (pathname == "/contacto/") {
-            // cargaContacto();
-            // cargarProvinciaRuta();
-            cargarTiempo();
-
-            setTimeout(
-                function () {
-                    // cargarTiempo();
-                }, 1000);
-        }
-    }
-});
-
-$("#menu-item-162356").click(function () {
-    // $("p").hide();
-    // alert("contacto");
-});
-
-$("#menu-item-alcoy").click(function () {
-    // alert("alcoy");
-    // openPrint();
-});
+}
 
 function cargaAlcoy() {
     // alert("en alcoy estoy");
