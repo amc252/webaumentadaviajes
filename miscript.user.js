@@ -1672,7 +1672,7 @@ function cargarTiempo() {
                 console.log("princiupio data");
                 console.log(data);
                 console.log("fin data");
-                // $(".et_pb_row_1").append($('<p>').append(data.parse.title));
+                // $(".et_pb_row_1").append($('<h>').append(data.parse.title));
                 // $(".et_pb_row_1").append('<hr>');
     
     
@@ -1733,6 +1733,8 @@ function cargarTiempo() {
 
     var promesas = [];
 
+    var control_errores = false;
+
     tiempo_data['features'].forEach(function (ciud) {
         var peticion = $.ajax({
             url: proxy_cors + "https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/horaria/" + ciud['properties']['id'] + "?api_key=" + api_key_aemet,
@@ -1778,15 +1780,17 @@ function cargarTiempo() {
                         }
                     },
                     error: function (errorMessage) {
-                        console.log("error_tiempo4");
-                        console.log(errorMessage);
+                        // console.log("error_tiempo4");
+                        // console.log(errorMessage);
+                        control_errores = true;
                     }
                 });
                 promesas.push(peticion_interna);
             },
             error: function (errorMessage) {
-                console.log("error_el_tiempo4");
-                console.log(errorMessage);
+                // console.log("error_el_tiempo4");
+                // console.log(errorMessage);
+                control_errores = true;
             }
         });
         promesas.push(peticion);
@@ -1856,16 +1860,26 @@ function cargarTiempo() {
                     $("#columna2_tiempo").append('<hr>');
                 },
                 error: function (errorMessage) {
-                    console.log("error_tiempo_escrito2");
-                    console.log(errorMessage);
+                    // console.log("error_tiempo_escrito2");
+                    // console.log(errorMessage);
+                    control_errores = true;
                 }
             });
         },
         error: function (errorMessage) {
-            console.log("error_el_tiempo_escrito");
-            console.log(errorMessage);
+            // console.log("error_el_tiempo_escrito");
+            // console.log(errorMessage);
+            control_errores = true;
         }
     });
+
+    setTimeout(
+        function () {
+            if (control_errores) {
+                $("#cargando_gif").css({ "display": "none" });
+                $("#columna2_tiempo").append('<h1><strong>ERROR: SOBRE CARGA DEL SERVIDOR<br>PRUEBE A INTENTARLO EN 1 MINUTO</strong></h1>');
+            }
+        }, 5000);
 }
 
 function gradosADecimal(grados, minutos, segundos, direccion) {
