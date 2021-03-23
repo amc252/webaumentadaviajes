@@ -121,8 +121,8 @@ $(document).ready(function () {
         // alert("si existe la pagina");
         if (pathname == "/contacto/") {
             // cargaContacto();
-            // cargarProvinciaRuta();
-            cargarTiempo();
+            cargarProvinciaRuta();
+            // cargarTiempo();
 
             setTimeout(
                 function () {
@@ -854,7 +854,7 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
     // console.log(conjunto_sitios);
     $('#' + id_div_texto).empty();
 
-    var tabla_sitios = $('<table>').addClass('tablepress tablepress-id-14').css({ 'word-wrap': 'break-word', 'table-layout': 'fixed', 'width': '100%' });
+    var tabla_sitios = $('<table>').attr('id', 'tabla_resultados_busqueda').addClass('tablepress tablepress-id-14').css({ 'word-wrap': 'break-word', 'table-layout': 'fixed', 'width': '100%' });
     var fila = $(
         '<thead>' +
         '<tr class="row-1 odd">' +
@@ -919,6 +919,8 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
         var $text = $row.find(".column-1");
 
         var $this = $(this);
+        console.log("otro");
+        console.log($this);
         $this.toggleClass('guardado');
         if ($this.hasClass('guardado')) {
             $this.text('Quitar sitio');
@@ -968,7 +970,7 @@ function pintarInfoSitioGuardados() {
     pintarPuntosMapaGuardados();
 
     $('#sitios_guardados_lista').empty();
-    var tabla_sitios = $('<table>').addClass('tablepress tablepress-id-14').css({ 'word-wrap': 'break-word', 'table-layout': 'fixed', 'width': '100%' });
+    var tabla_sitios = $('<table>').attr('id', 'tabla_sitios_guardados').addClass('tablepress tablepress-id-14').css({ 'word-wrap': 'break-word', 'table-layout': 'fixed', 'width': '100%' });
     var fila = $(
         '<thead>' +
         '<tr class="row-1 odd">' +
@@ -1020,7 +1022,7 @@ function pintarInfoSitioGuardados() {
         if (webs !== "") {
             fila_cadena += 'Web: ' + webs + '<br>';
         }
-        fila_cadena += '<button id="guardar_sitio_' + indice + '" type="button" class="guardar_sitio_guardados guardado">Quitar sitio</button>';
+        fila_cadena += '<button id="guardar_sitio_guardados_' + indice + '" type="button" class="guardar_sitio_guardados guardado">Quitar sitio</button>';
         fila_cadena += '</td></tr>';
 
         fila = $(fila_cadena);
@@ -1042,19 +1044,22 @@ function pintarInfoSitioGuardados() {
 
         pintarInfoSitioGuardados();
 
-        $('#resultados_busqueda > table').children('tr').each(function (i, v) {
-            var aux_id_resutlado_busqueda = $(this).children('td')[0].id;
+        var tabla_resultados = document.getElementById('tabla_resultados_busqueda');
+        // console.log(tabla_resultados);
+        for (var i = 1; i < tabla_resultados.rows.length; i += 1) {
+            var aux_id_resutlado_busqueda = tabla_resultados.rows[i].getElementsByTagName("td")[0].id;
+            // console.log(aux_id_resutlado_busqueda);
+            // console.log($text[0].id);
             if (aux_id_resutlado_busqueda === $text[0].id) {
                 // console.log(aux_id_resutlado_busqueda);
-                var $boton = $(this).children('td').children('button');
-                $boton.toggleClass('guardado');
-                if ($boton.hasClass('guardado')) {
-                    $boton.text('Quitar sitio');
-                } else {
-                    $boton.text('Guardar sitio');
-                }
+                // var $boton = $(this);
+                var $boton = tabla_resultados.rows[i].getElementsByTagName("button");
+                // console.log($boton);
+                // console.log($boton[0].classList);
+                $boton[0].classList.toggle("guardado");
+                $boton[0].innerText = 'Guardar sitio';
             }
-        })
+        }
     });
 
     //Despues de que se añada la tabla, hay que añadir el evento
