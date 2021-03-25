@@ -841,6 +841,75 @@ function pintarPuntosMapa(conjunto_puntos, id_conjunto_puntos) {
     });
 }
 
+function pintarLineasPuntosMapaGuardados(conjunto_puntos_lineas, id_conjunto_puntos_lineas) {
+    var array_aux = [];
+    for (i = 0; i < conjunto_puntos_lineas.features.length; i++) {
+        array_aux.push(conjunto_puntos_lineas.features[i].geometry.coordinates);
+    }
+
+    for (i = 1; i <= array_aux.length; i++) {
+        var nombre_capa = id_conjunto_puntos_lineas + '_lineas_' + i;
+        var mapLayer = map.getLayer(nombre_capa);
+        if (typeof mapLayer !== 'undefined') {
+            // Remove map layer & source.
+            map.removeLayer(nombre_capa).removeSource(nombre_capa);
+        }
+    }
+
+    // console.log(map.getStyle().layers);
+
+    if (array_aux.length > 1) {
+        for (i = 1; i < array_aux.length; i++) {
+
+            (function (index) {
+                var lngFrom = array_aux[index - 1][0];
+                var latFrom = array_aux[index - 1][1];
+                var lngTo = array_aux[index][0];
+                var latTo = array_aux[index][1];
+
+                $.ajax({
+                    url: proxy_cors + 'https://api.mapbox.com/directions/v5/mapbox/driving/' + lngFrom + ',' + latFrom + ';' + lngTo + ',' + latTo + '?overview=full&geometries=geojson&access_token=pk.eyJ1IjoiYW1jMjUyIiwiYSI6ImNramJuaXZ1dDA5emkyc3Aybzdna2wxZXUifQ.kbehf-GRfLRd1vt5UaRVQg',
+                    // url: proxy_cors + 'https://api.mapbox.com/directions/v5/mapbox/driving/' + lngFrom + ',' + latFrom + ';' + lngTo + ',' + latTo + '?geometries=geojson&access_token=pk.eyJ1IjoiYW1jMjUyIiwiYSI6ImNramJuaXZ1dDA5emkyc3Aybzdna2wxZXUifQ.kbehf-GRfLRd1vt5UaRVQg',
+                    success: function (data) {
+                        var nombre_capa = id_conjunto_puntos_lineas + '_lineas_' + index;
+                        map.addSource(nombre_capa, {
+                            'type': 'geojson',
+                            'data': {
+                                'type': 'Feature',
+                                'properties': {},
+                                'geometry': {
+                                    'type': 'LineString',
+                                    'coordinates': data.routes[0].geometry.coordinates
+                                }
+                            }
+                        });
+                        map.addLayer({
+                            'id': nombre_capa,
+                            'type': 'line',
+                            'source': nombre_capa,
+                            'layout': {
+                                'line-join': 'round',
+                                'line-cap': 'round'
+                            },
+                            'paint': {
+                                'line-color': '#888',
+                                'line-width': 8
+                            }
+                        });
+
+                        // console.log(map.getStyle().layers);
+                    },
+                    error: function (errorMessage) {
+                        console.log("error_ruta_mapbox");
+                        console.log(errorMessage);
+                    }
+                });
+            })(i);
+
+        }
+    }
+}
+
 function pintarPuntosMapaGuardados() {
     var id_conjunto_puntos = 'sitios_guardados'
     var aux_pintar_puntos = {};
@@ -848,6 +917,7 @@ function pintarPuntosMapaGuardados() {
     aux_pintar_puntos['type'] = 'FeatureCollection';
     aux_pintar_puntos['features'] = array_sitios_guardados;
     pintarPuntosMapa(aux_pintar_puntos, id_conjunto_puntos);
+    pintarLineasPuntosMapaGuardados(aux_pintar_puntos, id_conjunto_puntos)
 }
 
 function pintarInfoSitio(conjunto_sitios, id_div_texto) {
@@ -919,8 +989,8 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
         var $text = $row.find(".column-1");
 
         var $this = $(this);
-        console.log("otro");
-        console.log($this);
+        // console.log("otro");
+        // console.log($this);
         $this.toggleClass('guardado');
         if ($this.hasClass('guardado')) {
             $this.text('Quitar sitio');
@@ -1030,7 +1100,7 @@ function pintarInfoSitioGuardados() {
     })
     $('#sitios_guardados_lista').append(tabla_sitios);
     $('.guardar_sitio_guardados').click(function () {
-        console.log("en el boton de las filas");
+        // console.log("en el boton de las filas");
 
         var $row = $(this).closest("tr");
         var $text = $row.find(".column-1");
@@ -1068,10 +1138,23 @@ function pintarInfoSitioGuardados() {
         $this.toggleClass('mostrar');
         if ($this.hasClass('mostrar')) {
             map.setLayoutProperty('sitios_guardados', 'visibility', 'none');
+            var capas_mapa = map.getStyle().layers;
+            capas_mapa.map(function (capa) {
+                if (capa.id.match("^sitios_guardados_lineas_")) {
+                    map.setLayoutProperty(capa.id, 'visibility', 'none');
+                }
+            });
+
             $this.text('Mostrar sitios guardados en el mapa');
         }
         else {
             map.setLayoutProperty('sitios_guardados', 'visibility', 'visible');
+            var capas_mapa = map.getStyle().layers;
+            capas_mapa.map(function (capa) {
+                if (capa.id.match("^sitios_guardados_lineas_")) {
+                    map.setLayoutProperty(capa.id, 'visibility', 'visible');
+                }
+            });
             $this.text('Ocultar sitios guardados en el mapa');
         }
     });
