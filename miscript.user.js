@@ -892,8 +892,8 @@ function pintarLineasPuntosMapaGuardados(conjunto_puntos_lineas, id_conjunto_pun
                                 'line-cap': 'round'
                             },
                             'paint': {
-                                'line-color': '#888',
-                                'line-width': 8
+                                'line-color': '#F7455D',
+                                'line-width': 4
                             }
                         });
 
@@ -911,7 +911,13 @@ function pintarLineasPuntosMapaGuardados(conjunto_puntos_lineas, id_conjunto_pun
 }
 
 function pintarPuntosMapaGuardados() {
+
     var id_conjunto_puntos = 'sitios_guardados'
+    var mapLayer = map.getLayer(id_conjunto_puntos);
+    if (typeof mapLayer !== 'undefined') {
+        // Remove map layer & source.
+        map.removeLayer(id_conjunto_puntos).removeSource(id_conjunto_puntos);
+    }
     var aux_pintar_puntos = {};
     aux_pintar_puntos['categoria'] = id_conjunto_puntos;
     aux_pintar_puntos['type'] = 'FeatureCollection';
@@ -1032,11 +1038,7 @@ function pintarInfoSitio(conjunto_sitios, id_div_texto) {
 }
 
 function pintarInfoSitioGuardados() {
-    var mapLayer = map.getLayer('sitios_guardados');
-    if (typeof mapLayer !== 'undefined') {
-        // Remove map layer & source.
-        map.removeLayer('sitios_guardados').removeSource('sitios_guardados');
-    }
+
     pintarPuntosMapaGuardados();
 
     $('#sitios_guardados_lista').empty();
@@ -1093,6 +1095,8 @@ function pintarInfoSitioGuardados() {
             fila_cadena += 'Web: ' + webs + '<br>';
         }
         fila_cadena += '<button id="guardar_sitio_guardados_' + indice + '" type="button" class="guardar_sitio_guardados guardado">Quitar sitio</button>';
+        fila_cadena += '<button class="down_tabla" style="float: right;">&#8595;</button>';
+        fila_cadena += '<button class="up_tabla" style="float: right;">&#8593;</button>';
         fila_cadena += '</td></tr>';
 
         fila = $(fila_cadena);
@@ -1130,6 +1134,42 @@ function pintarInfoSitioGuardados() {
                 $boton[0].innerText = 'Guardar sitio';
             }
         }
+    });
+
+    $(".up_tabla,.down_tabla").click(function () {
+        var $elem = this;
+        var fila = $($elem).parents("tr:first");
+        var numero_fila = $(this).closest("tr").index();
+        // console.log(numero_fila);
+
+        if ($(this).is('.up_tabla')) {
+            fila.insertBefore(fila.prev());
+            // quita el elemento que se quiere subir
+            var f = array_sitios_guardados.splice(numero_fila, 1)[0];
+            // inserta el elemento que se queria subir en una posición más arriba
+            if (numero_fila - 1 < 0) {
+                array_sitios_guardados.splice(numero_fila, 0, f);
+            } else {
+                array_sitios_guardados.splice(numero_fila - 1, 0, f);
+            }
+        }
+        else {
+            fila.insertAfter(fila.next());
+            // quita el elemento que se quiere bajar
+            var f = array_sitios_guardados.splice(numero_fila, 1)[0];
+            // inserta el elemento que se queria bajar en una posición más abajo
+            if (numero_fila + 1 > array_sitios_guardados.length) { // tiene que ser > y no >= porque en el momento que hace el if, ya se le ha quitado el elemento a mover, por lo que el length es 1 menos
+                array_sitios_guardados.splice(numero_fila, 0, f);
+            } else {
+                array_sitios_guardados.splice(numero_fila + 1, 0, f);
+            }
+        }
+
+        pintarPuntosMapaGuardados();
+        // console.log(array_sitios_guardados);
+        // array_sitios_guardados.forEach(function (sitio) {
+        //     console.log(sitio.properties.direccion);
+        // });
     });
 
     //Despues de que se añada la tabla, hay que añadir el evento
