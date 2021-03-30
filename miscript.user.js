@@ -45,6 +45,13 @@ var tipo_punto = {
     fiesta: 'champagne',
     parque_tematico: 'theme-park',
     cine: 'cinema-',
+    ropa: 'clothes',
+    centro_recreativo: 'trampoline-park',
+    acampada: 'camping-tent',
+    vinos: 'wine-bottle',
+    carniceria: 'cleaver',
+    veterinario: 'veterinarian',
+    libreria: 'book-shelf',
     chino: 'noodles',
     pizza: 'pizza',
     italiano: 'spaghetti',
@@ -756,6 +763,13 @@ function cargarMapa(id_div_mapa, longitud_inicial, latitud_inicial, zoom_inicial
             'champagne',
             'theme-park',
             'cinema-',
+            'clothes',
+            'trampoline-park',
+            'camping-tent',
+            'wine-bottle',
+            'cleaver',
+            'veterinarian',
+            'book-shelf',
             'restaurant',
             'noodles',
             'pizza',
@@ -1463,10 +1477,14 @@ function clasificarCategoria(nombre_icono) {
     else if ((nombre_icono).includes("tienda") ||
         (nombre_icono).includes("botiga") ||
         (nombre_icono).includes("regalo") ||
-        (nombre_icono).includes("artículo")) {
+        (nombre_icono).includes("artículo") ||
+        (nombre_icono).includes("centro comercial") ||
+        (nombre_icono).includes("mercado")) {
         icono = tipo_punto.tienda;
     }
-    else if ((nombre_icono).includes("hotel")) {
+    else if ((nombre_icono).includes("hotel") ||
+        (nombre_icono).includes("pensi") ||
+        (nombre_icono).includes("motel")) {
         icono = tipo_punto.hoteles;
     }
     else if ((nombre_icono).includes("médico")) {
@@ -1477,13 +1495,15 @@ function clasificarCategoria(nombre_icono) {
         icono = tipo_punto.parque_tematico;
     }
     else if ((nombre_icono).includes("parque") ||
-        (nombre_icono).includes("parc")) {
+        (nombre_icono).includes("parc") ||
+        (nombre_icono).includes("aire libre")) {
         icono = tipo_punto.parque;
     }
     else if ((nombre_icono).includes("plaza")) {
         icono = tipo_punto.plaza;
     }
-    else if ((nombre_icono).includes("baker")) {
+    else if ((nombre_icono).includes("baker") ||
+        (nombre_icono).includes("panader")) {
         icono = tipo_punto.panaderia;
     }
     else if ((nombre_icono).includes("icecream")) {
@@ -1498,11 +1518,36 @@ function clasificarCategoria(nombre_icono) {
     else if ((nombre_icono).includes("interés")) {
         icono = tipo_punto.poi;
     }
-    else if ((nombre_icono).includes("fiesta")) {
+    else if ((nombre_icono).includes("fiesta") ||
+        (nombre_icono).includes("festa")) {
         icono = tipo_punto.fiesta;
     }
     else if ((nombre_icono).includes("cine")) {
         icono = tipo_punto.cine;
+    }
+    else if ((nombre_icono).includes("ropa")) {
+        icono = tipo_punto.ropa;
+    }
+    else if ((nombre_icono).includes("centro recreativo") ||
+        (nombre_icono).includes("ocio")) {
+        icono = tipo_punto.centro_recreativo;
+    }
+    else if ((nombre_icono).includes("acampada") ||
+        (nombre_icono).includes("camping")) {
+        icono = tipo_punto.acampada;
+    }
+    else if ((nombre_icono).includes("vino") ||
+        (nombre_icono).includes("bodega")) {
+        icono = tipo_punto.vinos;
+    }
+    else if ((nombre_icono).includes("carnicer")) {
+        icono = tipo_punto.carniceria;
+    }
+    else if ((nombre_icono).includes("veterinarian")) {
+        icono = tipo_punto.veterinario;
+    }
+    else if ((nombre_icono).includes("libre")) {
+        icono = tipo_punto.libreria;
     }
     else {
         icono = tipo_punto.triangulo;
