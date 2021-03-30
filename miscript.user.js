@@ -68,7 +68,7 @@ var tipo_punto = {
 };
 
 var array_ciudades = [
-    { id: "00000", nombre: "Provincia", longitud: "-0.5000000", latitud: "38.3550000", zoom: "8" },
+    // { id: "00000", nombre: "Provincia", longitud: "-0.5000000", latitud: "38.3550000", zoom: "8" },
     { id: "03063", nombre: "Denia", longitud: "0.1057400", latitud: "38.8407800", zoom: "13" },
     { id: "03100", nombre: "Parcent", longitud: "-0.0644600", latitud: "38.7450200", zoom: "13" },
     { id: "03009", nombre: "Alcoy", longitud: "-0.4743200", latitud: "38.7054500", zoom: "13" },
@@ -82,6 +82,21 @@ var array_ciudades = [
     { id: "03121", nombre: "SantaPola", longitud: "-0.5658000", latitud: "38.1916500", zoom: "13" },
     { id: "03099", nombre: "Orihuela", longitud: "-0.9440100", latitud: "38.0848300", zoom: "13" },
     { id: "03133", nombre: "Torrevieja", longitud: "-0.6822200", latitud: "37.9787200", zoom: "13" },
+]
+
+var array_ciudades_adicionales = [
+    { id: "03122", nombre: "San Vicente", longitud: "-0.525278", latitud: "38.396389", zoom: "13" },
+    { id: "03104", nombre: "Petrer", longitud: "-0.766667", latitud: "38.483333", zoom: "13" },
+    { id: "03139", nombre: "Villajoyosa", longitud: "-0.2334600", latitud: "38.5075400", zoom: "13" },
+    { id: "03082", nombre: "Javea", longitud: "0.163056", latitud: "38.789167", zoom: "13" },
+    { id: "03047", nombre: "Calpe", longitud: "0.0445000", latitud: "38.6447000", zoom: "13" },
+    { id: "03059", nombre: "Crevillente", longitud: "-0.808889", latitud: "38.248611", zoom: "13" },
+    { id: "03050", nombre: "Campello", longitud: "-0.401111", latitud: "38.4275", zoom: "13" },
+    { id: "03093", nombre: "Novelda", longitud: "-0.7677300", latitud: "38.3847900", zoom: "13" },
+    { id: "03018", nombre: "Altea", longitud: "-0.0513900", latitud: "38.5988500", zoom: "13" },
+    { id: "03079", nombre: "Ibi", longitud: "-0.5722500", latitud: "38.6253300", zoom: "13" },
+    { id: "03090", nombre: "Muchamiel", longitud: "-0.4452900", latitud: "38.4158000", zoom: "13" },
+    { id: "03119", nombre: "San Juan", longitud: "-0.4362300", latitud: "38.4014800", zoom: "13" },
 ]
 
 var map;
@@ -131,6 +146,13 @@ $(document).ready(function () {
         }
     }
 });
+
+//Funcion para ordenar por nombre el array de ciudades
+function ordenarPorNombre(a, b) {
+    var aNombre = a.nombre.toLowerCase();
+    var bNombre = b.nombre.toLowerCase();
+    return ((aNombre < bNombre) ? -1 : ((aNombre > bNombre) ? 1 : 0));
+}
 
 function cargarMenu() {
     $('#top-menu').append(
@@ -271,6 +293,12 @@ function cargaContacto() {
 
 function cargarProvinciaRuta() {
 
+    for (i = 0; i < array_ciudades_adicionales.length; i++) {
+        array_ciudades.push(array_ciudades_adicionales[i]);
+    }
+    //Se ordena por nombre las ciudades
+    array_ciudades.sort(ordenarPorNombre);
+
     $(document).attr("title", "Ruta provincia");
     //esto es porque desaparecen unas imagenes sin motivo
     $(".jetpack-lazy-image").removeAttr("data-lazy-src");
@@ -319,10 +347,26 @@ function cargarProvinciaRuta() {
         function () {
             // cambiarPosicionMapa("-0.5000000", "38.3550000", "8");
         }, 2000);
+    $("#planificar_ruta").append($('<div>').attr("id", "informacion_ruta").attr('style', 'padding-top: 25px;'));
+    $("#informacion_ruta").append($(
+        '<h3>' +
+        '<strong>Planifica tu ruta  </strong>' +
+        '<img class="" src="/wp-content/uploads/2018/05/fondo-destacados-home.png" width="90" height="20">' +
+        '</h3>' +
+        '<p>Planifica tu ruta en la provincia de Alicante</p>' +
+        '<ul>' +
+        '<li>Elige una provincia</li>' +
+        '<li>Indica lo que quieres buscar (Ej: Museos, playas, parques, restaurantes, hoteles...)</li>' +
+        '<li>Guarda los sitios de interes para formar una ruta</li>' +
+        '</ul>'
+    ));
     $("#planificar_ruta").append($('<div>').attr("id", "opciones_ruta").attr('style', 'padding-top: 25px;'));
     $("#opciones_ruta").append($('<div>').attr("id", "filtros").attr('class', 'et_pb_column et_pb_column_1_4 et_pb_column_0'));
     $("#opciones_ruta").append($('<div>').attr("id", "resultados").attr('class', 'et_pb_column et_pb_column_3_4 et_pb_column_1'));
+    $("#filtros").append($('<h4>Elige provincia:</h4>'));
     $("#filtros").append($('<select>').attr('id', 'sb_ciudad'));
+    $("#sb_ciudad").append($('<option>').attr('selected', 'selected').attr('value', '00000').attr('disabled', 'true').text('Provincia'));
+
     for (i = 0; i < array_ciudades.length; i++) {
         $("#sb_ciudad").append($('<option>').attr('value', array_ciudades[i].id).text(array_ciudades[i].nombre));
     }
@@ -334,7 +378,8 @@ function cargarProvinciaRuta() {
             }
         }
     });
-    $("#filtros").append($('<input>').attr('id', 'in_buscar').attr('type', 'text').attr('placeholder', 'Ej: Restaurante Chino'));
+    $("#filtros").append($('<br><br><h4>Buscador:</h4>'));
+    $("#filtros").append($('<input>').attr('id', 'in_buscar').attr('type', 'text').attr('placeholder', 'Ej: Museo, playa, parque...'));
     $("#filtros").append($('<button>').attr('id', 'btn_buscar').attr('type', 'button').text('Buscar').attr('class', 'submit et_pb_button').css({ 'margin-top': '15px' }));
     $('#btn_buscar').click(function () {
         var palabra = $("#in_buscar").val();
