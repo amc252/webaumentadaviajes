@@ -353,7 +353,7 @@ function cargarProvinciaRuta() {
     setTimeout(
         function () {
             // cambiarPosicionMapa("-0.5000000", "38.3550000", "8");
-        }, 2000);
+        }, 2);
     $("#planificar_ruta").append($('<div>').attr("id", "informacion_ruta").attr('style', 'padding-top: 25px;'));
     $("#informacion_ruta").append($(
         '<h3>' +
@@ -370,7 +370,7 @@ function cargarProvinciaRuta() {
     $("#planificar_ruta").append($('<div>').attr("id", "opciones_ruta").attr('style', 'padding-top: 25px;'));
     $("#opciones_ruta").append($('<div>').attr("id", "filtros").attr('class', 'et_pb_column et_pb_column_1_4 et_pb_column_0'));
     $("#opciones_ruta").append($('<div>').attr("id", "resultados").attr('class', 'et_pb_column et_pb_column_3_4 et_pb_column_1'));
-    $("#filtros").append($('<h4>Elige provincia:</h4>'));
+    $("#filtros").append($('<h4>Elige ciudad:</h4>'));
     $("#filtros").append($('<select>').attr('id', 'sb_ciudad'));
     $("#sb_ciudad").append($('<option>').attr('selected', 'selected').attr('value', '00000').attr('disabled', 'true').text('Provincia'));
 
