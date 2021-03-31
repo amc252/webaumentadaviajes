@@ -350,10 +350,6 @@ function cargarProvinciaRuta() {
     $(".et_pb_row_0").append($('<div>').attr("id", "planificar_ruta"));
     $("#planificar_ruta").append($('<div>').attr("id", "mapa_ruta").attr("style", 'height: 500px;background-color:#08c;width: 100%;'));
     cargarMapa("mapa_ruta", "-0.5000000", "38.3550000", "8");
-    setTimeout(
-        function () {
-            // cambiarPosicionMapa("-0.5000000", "38.3550000", "8");
-        }, 2);
     $("#planificar_ruta").append($('<div>').attr("id", "informacion_ruta").attr('style', 'padding-top: 25px;'));
     $("#informacion_ruta").append($(
         '<h3>' +
