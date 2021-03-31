@@ -358,7 +358,7 @@ function cargarProvinciaRuta() {
         '</h3>' +
         '<p>Planifica tu ruta en la provincia de Alicante</p>' +
         '<ul>' +
-        '<li>Elige una provincia</li>' +
+        '<li>Elige una ciudad</li>' +
         '<li>Indica lo que quieres buscar (Ej: Museos, playas, parques, restaurantes, hoteles...)</li>' +
         '<li>Guarda los sitios de interes para formar una ruta</li>' +
         '</ul>'
