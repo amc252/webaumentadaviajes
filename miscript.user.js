@@ -118,16 +118,14 @@ var proxy_cors = "https://afternoon-oasis-49174.herokuapp.com/";
 $(document).ready(function () {
     cargarMenu();
     var pathname = window.location.pathname;
-    // alert(pathname);
-    // alert("la pagina ha cargado");
     // si es igual a 0, el id post-0 no existe
     // este id es el que aparece cuando la página no existe
     // si no existe este id entonces ha cargado algún articulo
     if ($("#post-0").length != 0) {
         $("#post-0").remove();
-        if (pathname == "/alcoy") {
-            cargaAlcoy();
-        }
+        // if (pathname == "/alcoy") {
+        //     cargaAlcoy();
+        // }
         switch (pathname) {
             case "/tiempo-provincia":
             case "/tiempo-provincia/":
@@ -137,19 +135,6 @@ $(document).ready(function () {
             case "/ruta-provincia/":
                 cargarProvinciaRuta();
                 break;
-        }
-    }
-    else {
-        // alert("si existe la pagina");
-        if (pathname == "/contacto/") {
-            // cargaContacto();
-            cargarProvinciaRuta();
-            // cargarTiempo();
-
-            setTimeout(
-                function () {
-                    // cargarTiempo();
-                }, 1000);
         }
     }
 });
@@ -162,29 +147,6 @@ function ordenarPorNombre(a, b) {
 }
 
 function cargarMenu() {
-    $('#top-menu').append(
-        $('<li>')
-            .attr("id", "menu-item-alcoy")
-            .append(
-                $('<a>').attr('href', "https://www.alicanteturismo.com/alcoy").append(
-                    $('<span>').attr('class', 'tab').append("Alcoy")
-                ))
-            .click(function () {
-                // alert("alcoy");
-            }));
-    $('#top-menu').append(
-        $('<li>')
-            .attr("id", "menu-item-prueba")
-            .append(
-                $('<a>').attr('href', "https://www.alicanteturismo.com/prueba").append(
-                    $('<span>').attr('class', 'tab').append("prueba")
-                ))
-            .click(function () {
-                // var win = window.open("result.html");
-                // $(win).load(function () {
-                //     $("body").append("<p>Result</p>");
-                // });
-            }));
     $('#menu-item-161754 > .sub-menu').append(
         $('<li>')
             .attr("id", "menu-item-tiempo-provincia")
@@ -206,7 +168,6 @@ function cargarMenu() {
             .click(function () {
             }));
 
-    // console.log("cargó todo");
 }
 
 function cargaAlcoy() {
@@ -239,9 +200,9 @@ function cargaContacto() {
         type: "get",
         dataType: "jsonp",
         success: function (data) {
-            // console.log("princiupio data");
-            // console.log(data);
-            // console.log("fin data");
+            console.log("princiupio data");
+            console.log(data);
+            console.log("fin data");
             $(".et_pb_row_1").append($('<p>').append(data.parse.title));
             $(".et_pb_row_1").append('<hr>');
 
@@ -286,9 +247,9 @@ function cargaContacto() {
             // a veces carga muy rapido y se adelanta al mapa y por eso da error
             setTimeout(
                 function () {
-                    cargarFourSquare();
+                    // cargarFourSquare();
                     cargarYelp();
-                    cargarHere();
+                    // cargarHere();
                 }, 1000);
         },
         error: function (errorMessage) {
@@ -334,7 +295,7 @@ function cargarProvinciaRuta() {
             '<img class="icono-cabecera aligncenter" src="/wp-content/uploads/2018/06/COMO-LLEGARb.png"> Planifica tu ruta por la provincia de Alicante' +
             '</h1>' +
             '<div style="clear: both; text-align: center;">&nbsp;</div>' +
-            '<h4 style="text-align: center;">Indica la pronvicia y usa el buscador para trazar una ruta con la información sobre alojamientos, restaurantes, parques...</h4>' +
+            '<h4 style="text-align: center;">Indica la ciudad y usa el buscador para trazar una ruta con la información sobre alojamientos, restaurantes, parques...</h4>' +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -446,16 +407,6 @@ function crearCheckBoxMapa() {
             borrarPuntosMapa('parques');
         }
     });
-    // $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_recarga_electrica').attr('type', 'checkbox')).append('Recarga Electrica');
-    // $('#cb_recarga_electrica').change(function () {
-    //     if (this.checked) {
-    //         // cargar recarga_electrica en el mapa
-    //         cargarOpenDataAlcoi("https://opendata.alcoi.org/data/dataset/64897e59-7fee-4511-9d5c-b8513ead0782/resource/c667d555-a05d-4cba-ac11-8172c0fbbdc3/download/recarga_electrica.kml", "recarga_electrica", tipo_punto.recarga_electrica);
-    //     }
-    //     else {
-    //         borrarPuntosMapa('recarga_electrica');
-    //     }
-    // });
     $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_centros_asistencia').attr('type', 'checkbox')).append('Centros de Asistencia');
     $('#cb_centros_asistencia').change(function () {
         if (this.checked) {
@@ -476,26 +427,6 @@ function crearCheckBoxMapa() {
             borrarPuntosMapa('centros_salud');
         }
     });
-    // $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_clinica_privada').attr('type', 'checkbox')).append('Clínica privada');
-    // $('#cb_clinica_privada').change(function () {
-    //     if (this.checked) {
-    //         // cargar clinica_privada en el mapa
-    //         cargarOpenDataAlcoi("https://opendata.alcoi.org/data/es/dataset/2810577f-9625-4dbc-ad29-cc1c82381399/resource/afb7dcc9-7171-42d2-90f0-c05efd3e49fc/download/clinica_privada.kml", "clinica_privada", tipo_punto.clinica_privada);
-    //     }
-    //     else {
-    //         borrarPuntosMapa('clinica_privada');
-    //     }
-    // });
-    // $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_centros_deportivos').attr('type', 'checkbox')).append('Centros Deportivos');
-    // $('#cb_centros_deportivos').change(function () {
-    //     if (this.checked) {
-    //         // cargar centros_deportivos en el mapa
-    //         cargarOpenDataAlcoi("https://opendata.alcoi.org/data/dataset/73088621-45b9-41a0-9060-c90ab20daf76/resource/f461d0c0-8d6a-43df-b0fa-0c4437732c9a/download/deporte.kml", "centros_deportivos", tipo_punto.centros_deportivos);
-    //     }
-    //     else {
-    //         borrarPuntosMapa('centros_deportivos');
-    //     }
-    // });
     $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_hoteles').attr('type', 'checkbox')).append('Hoteles');
     $('#cb_hoteles').change(function () {
         if (this.checked) {
@@ -596,16 +527,6 @@ function crearCheckBoxMapa() {
             borrarPuntosMapa('ruta_industrial');
         }
     });
-    // $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_puntos_wifi').attr('type', 'checkbox')).append('Puntos WIFI');
-    // $('#cb_puntos_wifi').change(function () {
-    //     if (this.checked) {
-    //         // cargar puntos_wifi en el mapa
-    //         cargarOpenDataAlcoi("https://opendata.alcoi.org/data/dataset/87ffa879-1fe1-48e0-91e8-c1e04a1729ef/resource/7fca4f39-fff3-40dd-80fb-d8d905664882/download/puntoswifi.kml", "puntos_wifi", tipo_punto.puntos_wifi);
-    //     }
-    //     else {
-    //         borrarPuntosMapa('puntos_wifi');
-    //     }
-    // });
     $("#datos_alcoi_museos").append($('<input>').attr('id', 'cb_piscinas_publicas').attr('type', 'checkbox')).append('Piscinas Públicas');
     $('#cb_piscinas_publicas').change(function () {
         if (this.checked) {
@@ -634,15 +555,6 @@ function cargarMapa(id_div_mapa, longitud_inicial, latitud_inicial, zoom_inicial
     API_js_callback = "https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js";
     API_js_callback_css = "https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css";
 
-    // var script = document.createElement('script');
-    // script.src = API_js_callback;
-    // var link = document.createElement('link');
-    // link.href = API_js_callback_css;
-    // link.rel = 'stylesheet';
-    // var head = document.getElementsByTagName("head")[0];
-    // (head || document.body).appendChild(script);
-    // (head || document.body).appendChild(link);
-
     var script_mapbox_api = $("<script>").attr("src", API_js_callback)[0];
     // console.log(script_mapbox_api);
     var link_css_mapbox = $("<link />").attr("href", API_js_callback_css).attr("rel", 'stylesheet')[0];
@@ -669,37 +581,20 @@ function cargarMapa(id_div_mapa, longitud_inicial, latitud_inicial, zoom_inicial
 
         $("<style> .mapboxgl-popup { max-width: 400px; font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif; } </style>").appendTo("head");
 
-        // Pintar los puntos (esto ya no va que he cambiado la forma del json)
-        // $.each(alcoi_data["items"], function (n, item) {
-        //     var longitud = item["coordinates"].split(",")[0];
-        //     var latitud = item["coordinates"].split(",")[1];
-        //     // console.log(longitud);
-        //     // console.log(latitud);
-        //     var marker = new mapboxgl.Marker({
-        //         color: "#" + n + "F0F0F",
-        //     })
-        //         .setLngLat([longitud, latitud])
-        //         .addTo(map);
-        // });
-
         // cuando carga ya las layers del mapa
         var mapa_limpio = false;
         map.on('sourcedata', function (e) {
             if (e.isSourceLoaded) {
                 // quitamos las layers referentes a cosas que ya marco, para que no salga duplicadas, ej: museos, estaciones, parques
-                // console.log("ini layers");
-                // console.log(map.getStyle().layers);
                 if (!mapa_limpio) {
                     map.style.stylesheet.layers.forEach(function (layer) {
                         // el poi es point of interest, y es para quitar los iconos y etiquetas
                         if ((layer.id).toLowerCase().indexOf("poi") >= 0) {
-                            // console.log(layer.id);
                             map.removeLayer(layer.id);
                         }
                     });
                     mapa_limpio = true;
                 }
-                // console.log('fin layers');
             }
         });
 
@@ -785,7 +680,6 @@ function cargarMapa(id_div_mapa, longitud_inicial, latitud_inicial, zoom_inicial
             });
         })
 
-        // cargarFourSquare();
     });
 }
 
@@ -1312,9 +1206,7 @@ function cargarOpenDataAlcoi(url_open_data_alcoi, id_conjunto_datos, icono_conju
 
                 });
             });
-            // console.log("generico");
-            // console.log(id_conjunto_datos);
-            // console.log(alcoi_data);
+
             pintarPuntosMapa(alcoi_data, id_conjunto_datos); //pintamos los parques en el mapa
         },
         error: function (errorMessage) {
@@ -1344,9 +1236,9 @@ function cargarDataRenfeEstaciones() {
         data: data,
         dataType: 'json',
         success: function (data) {
-            // console.log('ini data renfe');
-            // console.log(data);
-            // console.log('bucle data renfe');
+            console.log('ini data renfe');
+            console.log(data);
+            console.log('bucle data renfe');
 
             for (i = 0; i < data.result.records.length; i++) {
                 // console.log(data.result.records[i]);
@@ -1397,10 +1289,10 @@ function cargarFourSquare() {
         cache: false,
         dataType: 'jsonp',
         success: function (data) {
-            // console.log("ini data foursquere");
-            // console.log(data);
+            console.log("ini data foursquere");
+            console.log(data);
             // console.log(data.response.groups[0].items);
-            // console.log("fin data foursquere");
+            console.log("fin data foursquere");
             var foursquare_data = {};
             foursquare_data['categoria'] = "foursquare_data";
             foursquare_data['type'] = 'FeatureCollection';
@@ -1569,9 +1461,9 @@ function cargarYelp() {
             'Authorization': 'Bearer ' + api_key,
         },
         success: function (data) {
-            // console.log("ini data yelp");
-            // console.log(data);
-            // console.log("fin data yelp");
+            console.log("ini data yelp");
+            console.log(data);
+            console.log("fin data yelp");
             var yelp_data = {};
             yelp_data['categoria'] = "yelp_data";
             yelp_data['type'] = 'FeatureCollection';
@@ -1706,10 +1598,6 @@ function consultaHere(palabra, longitud, latitud) {
         type: "get",
         dataType: 'json',
         success: function (data) {
-            // console.log("ini data Here");
-            // console.log(data);
-            // console.log("fin data Here");
-
             var here_data = {};
             here_data['categoria'] = "here_data";
             here_data['type'] = 'FeatureCollection';
@@ -1876,58 +1764,6 @@ function cargarTiempo() {
     $("#informacion_tiempo").append($('<div>').attr("id", "cargando_gif").attr("class", "ai1ec-loading ai1ec-calendar-view-loading").css({ "display": "block" }));
     $("#columna1_tiempo").append($('<div>').attr("id", "mapa_tiempo").attr("style", 'height: 500px;background-color:#08c;width: 550px;'));
     cargarMapa("mapa_tiempo", "-0.4450000", "38.3550000", "8");
-
-    /*
-        $.ajax({
-            url: "https://es.wikipedia.org/w/api.php?origin=*&format=json&action=parse&page=Anexo:Municipios_de_la_provincia_de_Alicante",
-            type: "get",
-            dataType: "jsonp",
-            success: function (data) {
-                console.log("princiupio data");
-                console.log(data);
-                console.log("fin data");
-                // $(".et_pb_row_1").append($('<h>').append(data.parse.title));
-                // $(".et_pb_row_1").append('<hr>');
-    
-    
-                // console.log(data.parse.images[6]);
-                // $.ajax({
-                //     url: "https://es.wikipedia.org/w/api.php?origin=*&format=json&action=query&titles=File:" + data.parse.images[6] + "&prop=imageinfo&iiprop=url",
-                //     type: "get",
-                //     dataType: "jsonp",
-                //     success: function (data_image) {
-                //         // console.log(data_image);
-                //         // console.log(data_image.query.pages[-1].imageinfo[0].url);
-    
-                //         $("#image_wiki").append("ini foto");
-                //         $("#image_wiki").append($('<img>').attr('width', 150).attr("src", data_image.query.pages[-1].imageinfo[0].url));
-                //         $("#image_wiki").append("fin foto");
-                //     },
-                //     error: function (errorMessage) {
-                //         console.log("error_imagen");
-                //         console.log(errorMessage);
-                //     }
-                // });
-                // $(".et_pb_row_1").append($('<div>').attr("id", "image_wiki"));
-                // $(".et_pb_row_1").append('<hr>');
-    
-                $(".et_pb_row_1").append('<hr>');
-                //carga el articulo entero de la wikipedia y lo pone bonito
-                var markup = data.parse.text["*"];
-                var i = $('<div></div>').html(markup);
-                // $(".et_pb_row_1").append(i);
-                $(".et_pb_row_1").append($('<div>').attr("id", "info_wiki").append(markup));
-                $(".et_pb_row_1").append('<hr>');
-                $("#info_wiki > .mw-parser-output").children().not(".wikitable").remove();
-                // $(".wikitable").remove();
-    
-            },
-            error: function (errorMessage) {
-                console.log("error_wikipedia");
-                console.log(errorMessage);
-            }
-        });
-    */
 
     var tiempo_data = {};
     tiempo_data['categoria'] = "tiempo_data";
